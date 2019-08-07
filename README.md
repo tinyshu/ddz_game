@@ -12,16 +12,16 @@ js斗地主游戏
 
 
 
-![2](.\image\2.png)
+![server](https://github.com/tinyshu/ddz_game/blob/master/image/2.png)
 
 
 
-![3](.\image\3.png)
+![server](https://github.com/tinyshu/ddz_game/blob/master/image/3.png)
 
 
 
-![4](.\image\4.png)
+![server](https://github.com/tinyshu/ddz_game/blob/master/image/4.png)
 
 
 
-![5](.\image\5.png)
+![server](https://github.com/tinyshu/ddz_game/blob/master/image/5.png)
