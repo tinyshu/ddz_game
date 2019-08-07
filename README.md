@@ -8,7 +8,7 @@ js斗地主游戏
 
 
 
-![1](.\image\1.png)
+![Image text](.\image\1.png)
 
 
 
