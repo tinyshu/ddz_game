@@ -8,7 +8,7 @@ js斗地主游戏
 
 
 
-![server](https://github.com/tinyshu/ddz_game/master/image/1.png)
+![server](https://github.com/tinyshu/ddz_game/blob/master/image/1.png)
 
 
 
