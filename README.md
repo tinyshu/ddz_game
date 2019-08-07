@@ -6,8 +6,6 @@ js斗地主游戏
 
 数据库 ：mysql
 
-
-
 ![server](https://github.com/tinyshu/ddz_game/blob/master/image/1.png)
 
 
