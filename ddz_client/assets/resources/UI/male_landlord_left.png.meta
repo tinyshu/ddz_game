@@ -1,0 +1,31 @@
+{
+  "ver": "2.2.0",
+  "uuid": "9023830e-856c-4dcc-8ec9-bdffb129e539",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "subMetas": {
+    "male_landlord_left": {
+      "ver": "1.0.4",
+      "uuid": "1de14bca-84be-4172-bec3-37f7ea85d047",
+      "rawTextureUuid": "9023830e-856c-4dcc-8ec9-bdffb129e539",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 1,
+      "offsetY": 1,
+      "trimX": 16,
+      "trimY": 2,
+      "width": 108,
+      "height": 132,
+      "rawWidth": 138,
+      "rawHeight": 138,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

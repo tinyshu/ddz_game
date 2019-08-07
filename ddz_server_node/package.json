@@ -1,0 +1,16 @@
+{
+  "name": "ddz_server_node",
+  "version": "1.0.0",
+  "description": "doudizhu",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app. js",
+    "start": "node app.js"
+  },
+  "author": "tiny",
+  "license": "ISC",
+  "dependencies": {
+    "mysql": "^2.17.1",
+    "socket.io": "^2.2.0"
+  }
+}

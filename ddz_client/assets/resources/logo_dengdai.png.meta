@@ -1,0 +1,31 @@
+{
+  "ver": "2.2.0",
+  "uuid": "07c384bc-9a23-4b07-a9ba-9c9387d19e16",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "subMetas": {
+    "logo_dengdai": {
+      "ver": "1.0.4",
+      "uuid": "2084ece3-a124-45a1-a892-f0a88ae0869e",
+      "rawTextureUuid": "07c384bc-9a23-4b07-a9ba-9c9387d19e16",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 814,
+      "height": 234,
+      "rawWidth": 814,
+      "rawHeight": 234,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
