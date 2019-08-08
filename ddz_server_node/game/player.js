@@ -89,7 +89,22 @@ module.exports = function(info,socket,callindex,gamectr){
                             that._isready = true 
                             that._room.playerReady(that)
                          }
-                         break   
+                         break 
+                     case "player_start_notify":
+                           if(that._room){
+                            that._room.playerStart(that,function(err,result){
+                                if(err){
+                                    console.log("player_start_notify err"+ err)
+                                    _notify("player_start_notify",err,null,callindex)
+                                }else{ 
+                                    //加入房间成功
+                                    
+                                    _notify("player_start_notify",err,result.data,callindex)
+                                }
+        
+                            })
+                           }
+                           break    
             default:
                 break;    
         }
@@ -104,6 +119,11 @@ module.exports = function(info,socket,callindex,gamectr){
    that.sendplayerReady = function(data){
        console.log("sendplayerReady accountid:"+data)
        _notify("player_ready_notify",0,data,0)
+   }
+
+   that.gameStart = function(){
+       console.log("player gameStart")
+       _notify("gameStart_notify",0,{},0)
    }
    return that
 }

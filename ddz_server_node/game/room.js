@@ -39,6 +39,7 @@ module.exports = function(roominfo,player){
     that.bottom = tconfig.bottom
     that.rate = tconfig.rate
     that.gold =  that.rate * that.bottom
+    that.house_manage = player
 
     that.jion_player = function(player){
         if(player){
@@ -81,19 +82,34 @@ module.exports = function(roominfo,player){
         //var seatid = getSeatIndex(this._player_list) //分配一个座位号
         if(callback){
             var enterroom_para = {
-                seatindex: player.seatindex,
-                roomid:that.room_id,
-                playerdata: player_data,
+                seatindex: player.seatindex, //自己在房间内的位置
+                roomid:that.room_id,      //房间roomid
+                playerdata: player_data,  //房间内玩家用户列表
+                housemanageid:that.house_manage._accountID, 
             }
             callback(0,enterroom_para)
             //https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1564763901986&di=82c257959de2c29ea027a4c2a00952e0&imgtype=0&src=http%3A%2F%2Fimages.liqucn.com%2Fimg%2Fh1%2Fh988%2Fimg201711250941030_info400X400.jpg
        }
     }
 
+    const changeHouseManage = function(player){
+        if(player){
+            that.house_manage = player
+        }
+    }
+    //玩家掉线接口
     that.playerOffLine = function(player){
+        //通知房间内那个用户掉线,并且用用户列表删除
         for(var i=0;i<that._player_list.length;i++){
             if(that._player_list[i]._accountID === player._accountID){
                 that._player_list.splice(i,1)
+                //判断是否为房主掉线
+                if(that.house_manage._accountID == player._accountID){
+                    if(that._player_list.length>=1){
+                        changeHouseManage(that._player_list[0])
+                    }
+                    
+                }
             }
         }
     }
@@ -105,6 +121,37 @@ module.exports = function(roominfo,player){
         }
     }
 
+    const gameStart = function(){
+        for(var i=0;i<that._player_list.length;i++){
+            that._player_list[i].gameStart()
+        }
+    }
+    that.playerStart = function(player,cb){
+        if(that._player_list.length != 3){
+            if(cb){
+                cb(-2,null)
+            }
+            return
+        }
+
+        //判断是有都准备成功
+        for(var i=0;i<that._player_list.length;i++){
+            if(that._player_list[0]._accountID!=that.house_manage._accountID){
+                if(that._player_list[0]._isready==false){
+                    cb(-3,null)
+                    return 
+                }
+            }
+        }
+
+        //开始游戏
+        if(cb){
+            cb(0,{})
+        }
+
+        //下发游戏开始广播消息
+        gameStart()
+    }
     return that
 }
 
