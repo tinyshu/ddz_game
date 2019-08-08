@@ -82,9 +82,19 @@ const socketCtr = function(){
         event.on("player_ready_notify",callback)
     }
 
+    that.onGameStart = function(callback){
+        if(callback){
+           event.on("gameStart_notify",callback)
+        }
+        
+    }
     //发送ready消息
     that.requestReady = function(){
         _sendmsg("player_ready_notify",{},null)
+    }
+
+    that.requestStart = function(callback){
+        _request("player_start_notify",{},callback)
     }
     return that
 }

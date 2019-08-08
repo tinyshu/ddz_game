@@ -34,11 +34,15 @@ cc.Class({
                 var playerdata_list = result.playerdata
                 var roomid = result.roomid
                 this.roomid_label.string = "房间号:" + roomid
+                myglobal.playerData.housemanageid = result.housemanageid
+                
                 for(var i=0;i<playerdata_list.length;i++){
-                    //console.log("this----"+this)
+                    //consol.log("this----"+this)
                     this.addPlayerNode(playerdata_list[i])
                 }
             }
+            var gamebefore_node = this.node.getChildByName("gamebeforeUI")
+            gamebefore_node.emit("init")
         }.bind(this))
 
         //在进入房间后，注册其他玩家进入房间的事件
