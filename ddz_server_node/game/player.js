@@ -117,13 +117,19 @@ module.exports = function(info,socket,callindex,gamectr){
 
    //发送有玩家准备好消息
    that.sendplayerReady = function(data){
-       console.log("sendplayerReady accountid:"+data)
+       //console.log("sendplayerReady accountid:"+data)
        _notify("player_ready_notify",0,data,0)
    }
 
    that.gameStart = function(){
-       console.log("player gameStart")
+       //console.log("player gameStart")
        _notify("gameStart_notify",0,{},0)
    }
+
+   that.sendPlayerChangeManage = function(data){
+         console.log("sendPlayerChangeManage: account:"+data)
+         _notify("changehousemanage_notify",0,data,0)
+   }
+
    return that
 }

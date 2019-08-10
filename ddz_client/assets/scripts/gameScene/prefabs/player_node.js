@@ -18,6 +18,11 @@ cc.Class({
     onLoad () {
       this.readyimage.active = false
       this.offlineimage.active = false
+     
+      //监听开始游戏事件(客户端发给客户端)
+      this.node.on("gamestart_event",function(event){
+        this.readyimage.active = false
+      }.bind(this))
     },
 
     start () {

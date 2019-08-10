@@ -62,6 +62,21 @@ cc.Class({
                 }
             }
         }.bind(this))
+
+        myglobal.socket.onGameStart(function(){
+            for(var i=0;i<this.playerNodeList.length;i++){
+                var node = this.playerNodeList[i]
+                if(node){
+                    node.emit("gamestart_event")
+                }
+            }
+
+            //隐藏gamebeforeUI节点
+            var gamebeforeUI = this.node.getChildByName("gamebeforeUI")
+            if(gamebeforeUI){
+                gamebeforeUI.active = false
+            }
+        }.bind(this))
     },
 
     //seat_index自己在房间的位置id

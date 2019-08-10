@@ -1,5 +1,10 @@
 const config = require("../defines.js")
-
+const RoomState = {
+    ROOM_INVALID: -1,
+    ROOM_WAITREADY: 1,
+    ROOM_GAMESTART: 2,
+    ROOM_PUSHCARD: 3,
+}
 const getRandomStr = function (count) {
     var str = '';
     for (var i = 0 ; i < count ; i ++){
@@ -40,6 +45,30 @@ module.exports = function(roominfo,player){
     that.rate = tconfig.rate
     that.gold =  that.rate * that.bottom
     that.house_manage = player
+    that.state = RoomState.ROOM_INVALID
+
+    const changeState = function(state){
+        if(that.state==state){
+            return   
+        }
+        that.state = state
+        switch(state){
+            case RoomState.ROOM_WAITREADY:
+                break
+            case RoomState.ROOM_WAITREADY:
+                break
+            case RoomState.ROOM_GAMESTART:
+                gameStart()
+                //切换到发牌状态
+                changeState(RoomState.ROOM_PUSHCARD)
+                break
+            case RoomState.ROOM_PUSHCARD:
+                console.log("push card state")
+                break
+            default:
+                break    
+        }
+    }
 
     that.jion_player = function(player){
         if(player){
@@ -91,10 +120,14 @@ module.exports = function(roominfo,player){
             //https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1564763901986&di=82c257959de2c29ea027a4c2a00952e0&imgtype=0&src=http%3A%2F%2Fimages.liqucn.com%2Fimg%2Fh1%2Fh988%2Fimg201711250941030_info400X400.jpg
        }
     }
-
+    //重新设置房主
     const changeHouseManage = function(player){
         if(player){
             that.house_manage = player
+            //这里需要加上，掉线用户accountid过去
+            for(var i=0;i<that._player_list.length;i++){
+                that._player_list[i].sendPlayerChangeManage(that.house_manage._accountID)
+            }
         }
     }
     //玩家掉线接口
@@ -121,11 +154,14 @@ module.exports = function(roominfo,player){
         }
     }
 
+    //下发开始游戏消息
     const gameStart = function(){
         for(var i=0;i<that._player_list.length;i++){
             that._player_list[i].gameStart()
         }
     }
+
+    //房主点击开始游戏按钮
     that.playerStart = function(player,cb){
         if(that._player_list.length != 3){
             if(cb){
@@ -150,7 +186,8 @@ module.exports = function(roominfo,player){
         }
 
         //下发游戏开始广播消息
-        gameStart()
+        //gameStart()
+        changeState(RoomState.ROOM_GAMESTART)
     }
     return that
 }

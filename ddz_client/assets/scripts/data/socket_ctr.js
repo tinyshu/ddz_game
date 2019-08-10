@@ -86,7 +86,12 @@ const socketCtr = function(){
         if(callback){
            event.on("gameStart_notify",callback)
         }
-        
+    }
+
+    that.onChangeHouseManage = function(callback){
+        if(callback){
+            event.on("changehousemanage_notify",callback)
+        }
     }
     //发送ready消息
     that.requestReady = function(){
