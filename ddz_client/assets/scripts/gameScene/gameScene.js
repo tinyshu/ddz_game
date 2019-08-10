@@ -13,13 +13,21 @@ cc.Class({
 
     },
 
-    // LIFE-CYCLE CALLBACKS:
-
     onLoad () {
         this.playerNodeList = []
         this.di_label.string = "底:" +  myglobal.playerData.bottom
         this.beishu_label.string = "倍数:" + myglobal.playerData.rate
 
+        this.node.on("pushcard_other_event",function(){
+            console.log("gamescene pushcard_other_event")
+            for(var i=0;i<this.playerNodeList.length;i++){
+                    var node = this.playerNodeList[i]
+                    if(node){
+                    //给playernode节点发送事件
+                        node.emit("push_card_event")
+                    }
+            }
+        }.bind(this))
         myglobal.socket.request_enter_room({},function(err,result){
             console.log("enter_room_resp"+ JSON.stringify(result))
             if(err!=0){
@@ -71,12 +79,14 @@ cc.Class({
                 }
             }
 
-            //隐藏gamebeforeUI节点
-            var gamebeforeUI = this.node.getChildByName("gamebeforeUI")
+        //隐藏gamebeforeUI节点
+        var gamebeforeUI = this.node.getChildByName("gamebeforeUI")
             if(gamebeforeUI){
                 gamebeforeUI.active = false
             }
         }.bind(this))
+
+        //监听服务器push
     },
 
     //seat_index自己在房间的位置id
@@ -119,10 +129,11 @@ cc.Class({
         //创建的节点存储在gamescene的列表中
         this.playerNodeList.push(playernode_inst)
 
+        //玩家在room里的位置索引
         var index = this.playerdata_list_pos[player_data.seatindex]
         console.log("index "+player_data.seatindex+ " "+index)
         playernode_inst.position = this.players_seat_pos.children[index].position
-        playernode_inst.getComponent("player_node").init_data(player_data)
+        playernode_inst.getComponent("player_node").init_data(player_data,index)
     },
 
     start () {

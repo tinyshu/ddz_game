@@ -1,4 +1,5 @@
 const config = require("../defines.js")
+const Carder = require("./carder.js")
 const RoomState = {
     ROOM_INVALID: -1,
     ROOM_WAITREADY: 1,
@@ -46,6 +47,17 @@ module.exports = function(roominfo,player){
     that.gold =  that.rate * that.bottom
     that.house_manage = player
     that.state = RoomState.ROOM_INVALID
+    //初始化发牌器对象
+    //实例化牌和洗牌在构造函数完成
+    that.carder = Carder()
+    //洗牌后把牌分成三份和底牌并返回到room
+    // that.cards = that.carder.splitThreeCards()
+    // for(var i=0;i<that.cards.length;i++){
+    //     for(var j=0;j<that.cards[i].length;j++){
+    //         var card = that.cards[i][j]
+    //         console.log("index:"+i +" card value:"+card.value+" shape:"+card.shape+" king:"+card.king)
+    //     }
+    // }
 
     const changeState = function(state){
         if(that.state==state){
@@ -64,6 +76,10 @@ module.exports = function(roominfo,player){
                 break
             case RoomState.ROOM_PUSHCARD:
                 console.log("push card state")
+                that.three_cards = that.carder.splitThreeCards()
+                for(var i=0;i<that._player_list.length;i++){
+                    that._player_list[i].sendCard(that.three_cards[i])
+                }
                 break
             default:
                 break    

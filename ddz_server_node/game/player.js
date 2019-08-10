@@ -1,15 +1,16 @@
 module.exports = function(info,socket,callindex,gamectr){
    //console.log("playerinfo:"+ JSON.stringify(info))
    var that = {}
-   that._nickName = info.nick_name;
-   that._accountID = info.account_id;
-   that._avatarUrl = info.avatar_url;
-   that._gold = info.gold_count;
+   that._nickName = info.nick_name;    //用户昵称
+   that._accountID = info.account_id;  //用户账号
+   that._avatarUrl = info.avatar_url;  //头像
+   that._gold = info.gold_count;       //当前金币
    that._socket = socket
    that._gamesctr = gamectr
-   that._room = undefined
-   that._seatindex = 0
-   that._isready = false
+   that._room = undefined //所在房间的引用
+   that._seatindex = 0   //在房间的位置
+   that._isready = false //当前在房间的状态 是否点击了准备按钮
+   that._cards = []      //当前手上的牌
    //内部使用的发送数据函数
    const _notify = function (type, result ,data, callBackIndex) {
     console.log('notify =' + JSON.stringify(data));
@@ -131,5 +132,10 @@ module.exports = function(info,socket,callindex,gamectr){
          _notify("changehousemanage_notify",0,data,0)
    }
 
+   that.sendCard = function(data){
+    that._cards = data
+    _notify("pushcard_notify",0,data,0)
+   }
+   
    return that
 }

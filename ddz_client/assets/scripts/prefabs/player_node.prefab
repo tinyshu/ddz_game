@@ -39,17 +39,20 @@
       },
       {
         "__id__": 23
+      },
+      {
+        "__id__": 26
       }
     ],
     "_active": true,
     "_level": 1,
     "_components": [
       {
-        "__id__": 26
+        "__id__": 28
       }
     ],
     "_prefab": {
-      "__id__": 27
+      "__id__": 29
     },
     "_opacity": 255,
     "_color": {
@@ -829,8 +832,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 68,
-      "y": 60,
+      "x": -12,
+      "y": 34,
       "z": 0
     },
     "_scale": {
@@ -893,6 +896,75 @@
     "sync": false
   },
   {
+    "__type__": "cc.Node",
+    "_name": "card_node",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 1
+    },
+    "_children": [],
+    "_active": false,
+    "_level": 2,
+    "_components": [],
+    "_prefab": {
+      "__id__": 27
+    },
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_position": {
+      "__type__": "cc.Vec3",
+      "x": 80,
+      "y": 22,
+      "z": 0
+    },
+    "_scale": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_rotationX": 0,
+    "_rotationY": 0,
+    "_quat": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "groupIndex": 0,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__uuid__": "0b8260aa-074b-4e36-b6ea-650e104bb5b2"
+    },
+    "fileId": "2c6yIrY1pFDpTeFCjTYV2W",
+    "sync": false
+  },
+  {
     "__type__": "aa64aMZgnFIfLx2Lmi+lbwV",
     "_name": "",
     "_objFlags": 0,
@@ -920,6 +992,12 @@
     },
     "offlineimage": {
       "__id__": 23
+    },
+    "card_node": {
+      "__id__": 26
+    },
+    "card_prefab": {
+      "__uuid__": "62fccff5-5943-4a51-a469-83cd0d48e747"
     },
     "_id": ""
   },

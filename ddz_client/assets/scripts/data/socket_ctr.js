@@ -101,6 +101,13 @@ const socketCtr = function(){
     that.requestStart = function(callback){
         _request("player_start_notify",{},callback)
     }
+
+    //服务器下发牌通知
+    that.onPushCards = function(callback){
+        if(callback){
+            event.on("pushcard_notify",callback)
+         }
+    }
     return that
 }
 

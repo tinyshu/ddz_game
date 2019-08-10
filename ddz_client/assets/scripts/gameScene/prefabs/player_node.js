@@ -11,6 +11,8 @@ cc.Class({
         headimage:cc.Sprite,
         readyimage:cc.Node,
         offlineimage:cc.Node,
+        card_node:cc.Node,
+        card_prefab:cc.Prefab,
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -23,6 +25,18 @@ cc.Class({
       this.node.on("gamestart_event",function(event){
         this.readyimage.active = false
       }.bind(this))
+
+      //给其他玩家发牌事件
+      this.node.on("push_card_event",function(event){
+        console.log("on push_card_event")
+        //自己不再发牌
+        if(this.accountid==myglobal.playerData.accountID){
+            return
+        }
+        this.pushCard()
+      }.bind(this))
+
+
     },
 
     start () {
@@ -30,13 +44,17 @@ cc.Class({
     },
 
     //这里初始化房间内位置节点信息(自己和其他玩家)
-    init_data(data){
+    //data玩家节点数据
+    //index玩家在房间的位置索引
+    init_data(data,index){
       console.log("init_data:"+JSON.stringify(data))  
       //data:{"accountid":"2117836","nick_name":"tiny543","avatarUrl":"http://xxx","goldcount":1000}
       this.accountid = data.accountid
       this.account_label.string = data.accountid
       this.nickname_label.string = data.nick_name
       this.globalcount_label.string = data.goldcount
+      this.cardlist_node = []
+      this.seat_index = index
       if(data.isready==true){
         this.readyimage.active = true
       }
@@ -62,7 +80,7 @@ cc.Class({
          this.headimage.spriteFrame = spriteFrame;        
         }.bind(this));
 
-        //注册一个player_ready消息
+    //注册一个player_ready消息
     this.node.on("player_ready_notify",function(event){
         console.log("player_ready_notify event",event)
             var detail = event
@@ -71,7 +89,28 @@ cc.Class({
                 this.readyimage.active = true
             }
         }.bind(this))
+
+        if(index==1){
+          this.card_node.x = -this.card_node.x - 30
+        }
     },
 
     // update (dt) {},
+    pushCard(){
+        
+        this.card_node.active = true 
+        for(var i=0;i<17;i++){
+            var card = cc.instantiate(this.card_prefab)
+            card.scale=0.6
+            console.log(" this.card_node.parent.parent"+ this.card_node.parent.parent.name)
+            card.parent = this.card_node
+            //card.parent = this.node
+            var height = card.height
+            card.y = (17 - 1) * 0.5 * height * 0.4 * 0.3 - height * 0.4 * 0.3 * i;
+            card.x = 0
+           
+            //console.log("call pushCard x:"+card.x+" y:"+card.y)
+            this.cardlist_node.push(card)
+        }
+    },
 });
