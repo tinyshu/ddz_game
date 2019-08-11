@@ -18,6 +18,7 @@ cc.Class({
         this.di_label.string = "底:" +  myglobal.playerData.bottom
         this.beishu_label.string = "倍数:" + myglobal.playerData.rate
 
+        //监听，给其他玩家发牌(内部事件)
         this.node.on("pushcard_other_event",function(){
             console.log("gamescene pushcard_other_event")
             for(var i=0;i<this.playerNodeList.length;i++){
@@ -28,6 +29,20 @@ cc.Class({
                     }
             }
         }.bind(this))
+
+        //
+        this.node.on("canrob_event",function(event){
+            console.log("gamescene canrob_event")
+            //通知给playernode子节点
+            for(var i=0;i<this.playerNodeList.length;i++){
+                var node = this.playerNodeList[i]
+                if(node){
+                    //给playernode节点发送事件
+                    node.emit("playernode_canrob_event")
+                }
+            }
+        }.bind(this))
+
         myglobal.socket.request_enter_room({},function(err,result){
             console.log("enter_room_resp"+ JSON.stringify(result))
             if(err!=0){

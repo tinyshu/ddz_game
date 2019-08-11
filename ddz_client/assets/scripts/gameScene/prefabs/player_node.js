@@ -13,6 +13,10 @@ cc.Class({
         offlineimage:cc.Node,
         card_node:cc.Node,
         card_prefab:cc.Prefab,
+        tips_label:cc.Label,
+        clockimage:cc.Node,
+        qiangdidzhu_node:cc.Node, //抢地主的父节点
+        time_label:cc.Label,
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -58,6 +62,7 @@ cc.Class({
       if(data.isready==true){
         this.readyimage.active = true
       }
+
       //网络图片加载
     //     cc.loader.load({url: data.avatarUrl, type: 'jpg'},  (err, tex)=> {
     //     //cc.log('Should load a texture from RESTful API by specify the type: ' + (tex instanceof cc.Texture2D));
@@ -90,6 +95,19 @@ cc.Class({
             }
         }.bind(this))
 
+        //监听内部抢地主消息
+        this.node.on("playernode_canrob_event",function(event){
+            var detail = event
+            console.log("------playernode_canrob_event detail:"+detail)
+            if(detail==this.accountid){
+              this.qiangdidzhu_node.active=true
+              this.tips_label.string ="正在抢地主" 
+              this.time_label.string="5"
+              //开启一个定时器
+
+            }
+        }.bind(this))
+        //?
         if(index==1){
           this.card_node.x = -this.card_node.x - 30
         }

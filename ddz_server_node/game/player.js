@@ -91,7 +91,7 @@ module.exports = function(info,socket,callindex,gamectr){
                             that._room.playerReady(that)
                          }
                          break 
-                     case "player_start_notify":
+                     case "player_start_notify": //客户端:房主发送开始游戏消息
                            if(that._room){
                             that._room.playerStart(that,function(err,result){
                                 if(err){
@@ -106,6 +106,11 @@ module.exports = function(info,socket,callindex,gamectr){
                             })
                            }
                            break    
+                      case "player_rob_notify":  //客户端发送抢地主消息
+                           if(that._room){
+                            that._room.playerRobmaster(that,data)
+                           }
+                           break     
             default:
                 break;    
         }
@@ -137,5 +142,15 @@ module.exports = function(info,socket,callindex,gamectr){
     _notify("pushcard_notify",0,data,0)
    }
    
+   //发送谁可以抢地主
+    that.SendCanRob = function(data){
+        console.log("SendCanRob"+data)
+        _notify("canrob_notify",0,data,0)
+    }
+
+    //通知抢地主状态
+    that.sendRobState = function(data){
+        _notify("canrob_state_notify",0,data,0)
+    }
    return that
 }

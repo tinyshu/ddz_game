@@ -102,7 +102,7 @@ const socketCtr = function(){
         _request("player_start_notify",{},callback)
     }
 
-    //玩家通知服务器是否强地主
+    //玩家通知服务器抢地主消息
     that.requestRobState = function(state){
         _sendmsg("player_rob_notify",state,null)
     }
@@ -110,6 +110,20 @@ const socketCtr = function(){
     that.onPushCards = function(callback){
         if(callback){
             event.on("pushcard_notify",callback)
+         }
+    }
+
+    //监听服务器抢地主消息
+    that.onCanRobState = function(callback){
+        if(callback){
+            event.on("canrob_notify",callback)
+         }
+    }
+
+    //监听服务器通知谁抢地主操作消息
+    that.onRobState = function(callback){
+        if(callback){
+            event.on("canrob_state_notify",callback)
          }
     }
     return that

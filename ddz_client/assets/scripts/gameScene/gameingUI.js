@@ -12,6 +12,11 @@ cc.Class({
     onLoad () {
         this.cards_nods = []
         this.card_width = 0
+        //当前可以抢地主的accountid
+        this.rob_player_accountid = 0
+        //发牌动画是否结束
+        this.fapai_end = false
+        //监听服务器:下发牌消息
         myglobal.socket.onPushCards(function(data){
             console.log("onPushCards"+JSON.stringify(data))
             this.card_data = data
@@ -22,6 +27,23 @@ cc.Class({
             this.node.parent.emit("pushcard_other_event")
            
         }.bind(this))
+
+        //监听服务器:通知抢地主消息,显示相应的UI
+        myglobal.socket.onCanRobState(function(data){
+            console.log("onCanRobState"+JSON.stringify(data))
+            //这里需要2个变量条件：自己是下一个抢地主，2发牌动画结束
+            this.rob_player_accountid = data
+            if(data==myglobal.playerData.accountID && this.fapai_end==true){
+                this.robUI.active = true
+            }
+            //通知gamescene节点，倒计时
+            this.node.parent.emit("canrob_event")
+        }.bind(this))
+
+        myglobal.socket.onRobState(function(data){
+            console.log("onCanRobState"+JSON.stringify(data))
+        })
+       
     },
 
     start () {
@@ -31,8 +53,13 @@ cc.Class({
     _runactive_pushcard(){
         console.log("_runactive_pushcard:"+this.cur_index_card)
         if(this.cur_index_card < 0){
-            //发牌动画完成，现在抢地主按钮
-            this.robUI.active = true
+            //发牌动画完成，显示抢地主按钮
+            //this.robUI.active = true
+            this.fapai_end = true
+            if(this.rob_player_accountid==myglobal.playerData.accountID){
+                this.robUI.active = true
+            }
+            console.log("pushcard end")
             return
         }
         

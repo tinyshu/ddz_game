@@ -23,3 +23,8 @@ exports.createRoomConfig = {
         rate: 4
     }
 };
+
+exports.qian_state = {
+    buqiang:0,
+    qian:1,
+}
