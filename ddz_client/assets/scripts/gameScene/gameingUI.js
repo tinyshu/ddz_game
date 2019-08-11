@@ -8,12 +8,16 @@ cc.Class({
     },
 
     onLoad () {
+        this.cards_nods = []
+        this.card_width = 0
         myglobal.socket.onPushCards(function(data){
             console.log("onPushCards"+JSON.stringify(data))
+            this.card_data = data
+            this.cur_index_card = data.length - 1
             this.pushCard(data)
-            //左边移动
+             //左边移动定时器
+            this.scheduleOnce(this._runactive_pushcard.bind(this),0.2)
             this.node.parent.emit("pushcard_other_event")
-            //console.log("parent.name"+this.node.parent.name)
            
         }.bind(this))
     },
@@ -22,6 +26,21 @@ cc.Class({
      
     },
 
+    _runactive_pushcard(){
+        console.log("_runactive_pushcard:"+this.cur_index_card)
+        if(this.cur_index_card<0){
+            return
+        }
+        
+        var move_node = this.cards_nods[this.cur_index_card]
+        move_node.active = true
+        var newx = move_node.x + (this.card_width * 0.4*this.cur_index_card) - (this.card_width * 0.4)
+        var action = cc.moveTo(0.1, cc.v2(newx, -250));
+        move_node.runAction(action)
+        this.cur_index_card--
+        this.scheduleOnce(this._runactive_pushcard.bind(this),0.2)
+    },
+ 
     pushCard(data){
     if (data) {
             data.sort(function (a, b) {
@@ -40,7 +59,7 @@ cc.Class({
             });
         }
       //创建card预制体
-      var cards_nods = []
+      
       for(var i=0;i<17;i++){
         
         var card = cc.instantiate(this.card_prefab)
@@ -51,24 +70,13 @@ cc.Class({
         card.x = card.width * 0.4 * (17 - 1) * (-0.5) + card.width * 0.4 * 0;
         card.y = -250
         card.active = false
-        //var action = cc.moveTo(1, cc.v2(newx, newy));
-        //card.runAction(action)
-        //console.log("card_prefab position"+card.position)
         card.getComponent("card").showCards(data[i])
-        cards_nods.push(card)
+        this.cards_nods.push(card)
+        this.card_width = card.width
       }
       
-      for(var i=16;i>0;i--){
-        var move_node = cards_nods[i]
-        move_node.active = true
-        var newx = move_node.x + (card.width * 0.4*(-0.5)) + (card.width * 0.4*i)
-        var action = cc.moveTo(0.5, cc.v2(newx, -250));
-        move_node.runAction(action) 
-
-      }
-      
-    }
+    },
     // update (dt) {},
-
+  
 
 });
