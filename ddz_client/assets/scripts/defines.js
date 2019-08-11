@@ -24,4 +24,8 @@ exports.createRoomConfig = {
     }
 };
 
+exports.qian_state = {
+    buqiang:0,
+    qian:1,
+}
 window.defines = defines;

@@ -102,6 +102,10 @@ const socketCtr = function(){
         _request("player_start_notify",{},callback)
     }
 
+    //玩家通知服务器是否强地主
+    that.requestRobState = function(state){
+        _sendmsg("player_rob_notify",state,null)
+    }
     //服务器下发牌通知
     that.onPushCards = function(callback){
         if(callback){

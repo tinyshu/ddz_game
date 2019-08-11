@@ -1,10 +1,12 @@
 import myglobal from "../../mygolbal.js"
+
 cc.Class({
     extends: cc.Component,
 
     properties: {
         gameingUI: cc.Node,
         card_prefab:cc.Prefab,
+        robUI:cc.Node,
     },
 
     onLoad () {
@@ -28,7 +30,9 @@ cc.Class({
 
     _runactive_pushcard(){
         console.log("_runactive_pushcard:"+this.cur_index_card)
-        if(this.cur_index_card<0){
+        if(this.cur_index_card < 0){
+            //发牌动画完成，现在抢地主按钮
+            this.robUI.active = true
             return
         }
         
@@ -59,7 +63,6 @@ cc.Class({
             });
         }
       //创建card预制体
-      
       for(var i=0;i<17;i++){
         
         var card = cc.instantiate(this.card_prefab)
@@ -75,8 +78,31 @@ cc.Class({
         this.card_width = card.width
       }
       
+      //创建3张底牌
+      for(var i=0;i<3;i++){
+        var di_card = cc.instantiate(this.card_prefab)
+        di_card.scale=0.8
+        di_card.x = di_card.width-i*di_card.width-20
+        di_card.y=60
+        di_card.parent = this.node.parent
+      }
+
     },
     // update (dt) {},
-  
+    onButtonClick(event,customData){
+        switch(customData){
+            case "btn_qiandz":
+                console.log("btn_qiandz")
+                myglobal.socket.requestRobState(qian_state.qian)
+                break
+            case "btn_buqiandz":
+                console.log("btn_buqiandz")
+                myglobal.socket.requestRobState(qian_state.buqiang)
+                 break    
+            default:
+                break
+        }
+    }
+
 
 });
