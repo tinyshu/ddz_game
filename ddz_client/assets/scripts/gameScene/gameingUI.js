@@ -48,17 +48,25 @@ cc.Class({
         //console.log("gameUI this.card_node.parent"+ this.node.parent.name)
         card.parent = this.node.parent
       
-        //card.x = card.width * 0.4 * (17 - 1) * (-0.5) + card.width * 0.4 * i;
-        //card.y = -250
-        var newx = card.width * 0.4 * (17 - 1) * (-0.5) + card.width * 0.4 * i;
-        var newy = -250
-        var action = cc.moveTo(1, cc.v2(newx, newy));
-        card.runAction(action)
+        card.x = card.width * 0.4 * (17 - 1) * (-0.5) + card.width * 0.4 * 0;
+        card.y = -250
+        card.active = false
+        //var action = cc.moveTo(1, cc.v2(newx, newy));
+        //card.runAction(action)
         //console.log("card_prefab position"+card.position)
         card.getComponent("card").showCards(data[i])
-        
+        cards_nods.push(card)
       }
+      
+      for(var i=16;i>0;i--){
+        var move_node = cards_nods[i]
+        move_node.active = true
+        var newx = move_node.x + (card.width * 0.4*(-0.5)) + (card.width * 0.4*i)
+        var action = cc.moveTo(0.5, cc.v2(newx, -250));
+        move_node.runAction(action) 
 
+      }
+      
     }
     // update (dt) {},
 
