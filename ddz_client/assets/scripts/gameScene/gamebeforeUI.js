@@ -64,6 +64,9 @@ cc.Class({
                 myglobal.socket.requestReady()
                 break
             case "btn_start":
+                // if(isopen_sound){
+                //    cc.audioEngine.play(cc.url.raw("resources/sound/start_a.ogg")) 
+                //  }
                  console.log("btn_start")
                  myglobal.socket.requestStart(function(err,data){
                     if(err!=0){

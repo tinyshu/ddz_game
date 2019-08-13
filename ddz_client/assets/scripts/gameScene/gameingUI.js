@@ -22,8 +22,20 @@ cc.Class({
             this.card_data = data
             this.cur_index_card = data.length - 1
             this.pushCard(data)
+            if(isopen_sound){
+                //循环播放发牌音效
+                this.fapai_audioID = cc.audioEngine.play(cc.url.raw("resources/sound/fapai.mp3"),true)
+                console.log("start fapai_audioID"+this.fapai_audioID) 
+                // var url =cc.url.raw("resources/sound/fapai.mp3")
+                // cc.loader.loadRes(url, cc.AudioClip, function (err, clip) {
+                //     if(err){
+                //         return
+                //     }
+                //     this.fapai_audioID = cc.audioEngine.play(clip, true);
+                // }.bind(this));
+            }
              //左边移动定时器
-            this.scheduleOnce(this._runactive_pushcard.bind(this),0.2)
+            this.scheduleOnce(this._runactive_pushcard.bind(this),0.1)
             this.node.parent.emit("pushcard_other_event")
            
         }.bind(this))
@@ -58,6 +70,13 @@ cc.Class({
             this.fapai_end = true
             if(this.rob_player_accountid==myglobal.playerData.accountID){
                 this.robUI.active = true
+                
+               
+            }
+
+            if(isopen_sound){
+                console.log("start fapai_audioID"+this.fapai_audioID) 
+                cc.audioEngine.stop(this.fapai_audioID)
             }
             console.log("pushcard end")
             return
@@ -69,7 +88,7 @@ cc.Class({
         var action = cc.moveTo(0.1, cc.v2(newx, -250));
         move_node.runAction(action)
         this.cur_index_card--
-        this.scheduleOnce(this._runactive_pushcard.bind(this),0.2)
+        this.scheduleOnce(this._runactive_pushcard.bind(this),0.1)
     },
  
     pushCard(data){

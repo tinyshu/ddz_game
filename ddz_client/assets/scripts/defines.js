@@ -1,5 +1,6 @@
 const defines = {};
 defines.serverUrl = "http://localhost:3000";
+const isopen_sound = 1;
 //exports.roomFullPlayerCount = 3;
 exports.createRoomConfig = {
     'rate_1': {

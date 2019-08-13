@@ -48,6 +48,7 @@ cc.Class({
             if(err!=0){
                console.log("enter_room_resp err:"+err)
             }else{
+             
               //enter_room成功
               //notify ={"seatid":1,"playerdata":[{"accountid":"2117836","nick_name":"tiny543","avatarUrl":"http://xxx","goldcount":1000}]}
                 var seatid = result.seatindex //自己在房间里的seatid
@@ -63,6 +64,11 @@ cc.Class({
                     //consol.log("this----"+this)
                     this.addPlayerNode(playerdata_list[i])
                 }
+
+                if(isopen_sound){
+                    cc.audioEngine.stopAll()
+                    cc.audioEngine.play(cc.url.raw("resources/sound/bg.mp3"),true) 
+                 }
             }
             var gamebefore_node = this.node.getChildByName("gamebeforeUI")
             gamebefore_node.emit("init")
