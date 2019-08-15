@@ -134,11 +134,17 @@ cc.Class({
                 console.log("btn_qiandz")
                 myglobal.socket.requestRobState(qian_state.qian)
                 this.robUI.active = false
+                if(isopen_sound){
+                    cc.audioEngine.play(cc.url.raw("resources/sound/woman_jiao_di_zhu.ogg")) 
+                 }
                 break
             case "btn_buqiandz":
                 console.log("btn_buqiandz")
                 myglobal.socket.requestRobState(qian_state.buqiang)
                 this.robUI.active = false
+                if(isopen_sound){
+                    cc.audioEngine.play(cc.url.raw("resources/sound/woman_bu_jiao.ogg")) 
+                 }
                  break    
             default:
                 break
