@@ -32,13 +32,13 @@ cc.Class({
 
         //
         this.node.on("canrob_event",function(event){
-            console.log("gamescene canrob_event")
+            console.log("gamescene canrob_event:"+event)
             //通知给playernode子节点
             for(var i=0;i<this.playerNodeList.length;i++){
                 var node = this.playerNodeList[i]
                 if(node){
                     //给playernode节点发送事件
-                    node.emit("playernode_canrob_event")
+                    node.emit("playernode_canrob_event",event)
                 }
             }
         }.bind(this))
@@ -105,6 +105,19 @@ cc.Class({
             if(gamebeforeUI){
                 gamebeforeUI.active = false
             }
+        }.bind(this))
+
+              //监听服务器玩家抢地主消息
+        myglobal.socket.onRobState(function(event){
+                console.log("-----onRobState"+JSON.stringify(event))
+                //onRobState{"accountid":"2162866","state":1}
+                for(var i=0;i<this.playerNodeList.length;i++){
+                    var node = this.playerNodeList[i]
+                    if(node){
+                        //给playernode节点发送事件
+                        node.emit("playernode_rob_state_event",event)
+                    }
+                }
         }.bind(this))
 
         //监听服务器push

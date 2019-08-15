@@ -2,6 +2,11 @@ const defines = {};
 defines.serverUrl = "http://localhost:3000";
 const isopen_sound = 1;
 //exports.roomFullPlayerCount = 3;
+qian_state = {
+    "buqiang":0,
+    "qian":1,
+};
+
 exports.createRoomConfig = {
     'rate_1': {
         needCostGold: 10,
@@ -25,8 +30,7 @@ exports.createRoomConfig = {
     }
 };
 
-exports.qian_state = {
-    buqiang:0,
-    qian:1,
-}
+
 window.defines = defines;
+
+//https://www.iqiyi.com/v_19rshq4vz0.html

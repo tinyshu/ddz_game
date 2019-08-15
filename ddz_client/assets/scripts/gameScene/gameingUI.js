@@ -26,16 +26,9 @@ cc.Class({
                 //循环播放发牌音效
                 this.fapai_audioID = cc.audioEngine.play(cc.url.raw("resources/sound/fapai.mp3"),true)
                 console.log("start fapai_audioID"+this.fapai_audioID) 
-                // var url =cc.url.raw("resources/sound/fapai.mp3")
-                // cc.loader.loadRes(url, cc.AudioClip, function (err, clip) {
-                //     if(err){
-                //         return
-                //     }
-                //     this.fapai_audioID = cc.audioEngine.play(clip, true);
-                // }.bind(this));
             }
              //左边移动定时器
-            this.scheduleOnce(this._runactive_pushcard.bind(this),0.1)
+            this.scheduleOnce(this._runactive_pushcard.bind(this),0.3)
             this.node.parent.emit("pushcard_other_event")
            
         }.bind(this))
@@ -48,14 +41,9 @@ cc.Class({
             if(data==myglobal.playerData.accountID && this.fapai_end==true){
                 this.robUI.active = true
             }
-            //通知gamescene节点，倒计时
-            this.node.parent.emit("canrob_event")
+          
         }.bind(this))
-
-        myglobal.socket.onRobState(function(data){
-            console.log("onCanRobState"+JSON.stringify(data))
-        })
-       
+ 
     },
 
     start () {
@@ -79,6 +67,11 @@ cc.Class({
                 cc.audioEngine.stop(this.fapai_audioID)
             }
             console.log("pushcard end")
+
+              //通知gamescene节点，倒计时
+            var sendevent = this.rob_player_accountid
+            this.node.parent.emit("canrob_event",sendevent)
+
             return
         }
         
@@ -88,7 +81,7 @@ cc.Class({
         var action = cc.moveTo(0.1, cc.v2(newx, -250));
         move_node.runAction(action)
         this.cur_index_card--
-        this.scheduleOnce(this._runactive_pushcard.bind(this),0.1)
+        this.scheduleOnce(this._runactive_pushcard.bind(this),0.3)
     },
  
     pushCard(data){
@@ -113,13 +106,13 @@ cc.Class({
         
         var card = cc.instantiate(this.card_prefab)
         card.scale=0.8
-        //console.log("gameUI this.card_node.parent"+ this.node.parent.name)
         card.parent = this.node.parent
-      
         card.x = card.width * 0.4 * (17 - 1) * (-0.5) + card.width * 0.4 * 0;
         card.y = -250
         card.active = false
+
         card.getComponent("card").showCards(data[i])
+        //存储牌的信息,用于后面发牌效果
         this.cards_nods.push(card)
         this.card_width = card.width
       }
@@ -140,10 +133,12 @@ cc.Class({
             case "btn_qiandz":
                 console.log("btn_qiandz")
                 myglobal.socket.requestRobState(qian_state.qian)
+                this.robUI.active = false
                 break
             case "btn_buqiandz":
                 console.log("btn_buqiandz")
                 myglobal.socket.requestRobState(qian_state.buqiang)
+                this.robUI.active = false
                  break    
             default:
                 break

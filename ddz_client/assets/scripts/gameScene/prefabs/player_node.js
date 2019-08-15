@@ -13,10 +13,15 @@ cc.Class({
         offlineimage:cc.Node,
         card_node:cc.Node,
         card_prefab:cc.Prefab,
-        tips_label:cc.Label,
+        //tips_label:cc.Label,
         clockimage:cc.Node,
         qiangdidzhu_node:cc.Node, //抢地主的父节点
         time_label:cc.Label,
+        robimage_sp:cc.SpriteFrame,
+        robnoimage_sp:cc.SpriteFrame,
+        robIconSp: cc.Sprite,
+        robIcon_Sp:cc.Node,
+        robnoIcon_Sp:cc.Node,
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -24,7 +29,7 @@ cc.Class({
     onLoad () {
       this.readyimage.active = false
       this.offlineimage.active = false
-     
+      
       //监听开始游戏事件(客户端发给客户端)
       this.node.on("gamestart_event",function(event){
         this.readyimage.active = false
@@ -40,6 +45,33 @@ cc.Class({
         this.pushCard()
       }.bind(this))
 
+      this.node.on("playernode_rob_state_event",function(event){
+          //{"accountid":"2162866","state":1}
+          var detail = event
+      
+          //如果是自己在抢，需要隐藏qiangdidzhu_node节点
+          //this.accountid表示这个节点挂接的accountid
+          if(detail.accountid==this.accountid){
+            //console.log("detail.accountid"+detail.accountid)
+            this.qiangdidzhu_node.active = false
+              
+          }
+
+          if(this.accountid == detail.accountid){
+            if(detail.state==qian_state.qian){
+             
+              console.log("this.robIcon_Sp.active = true")
+              this.robIcon_Sp.active = true;
+
+            }else if(detail.state==qian_state.buqiang){
+              this.robnoIcon_Sp.active = true;
+             
+            }else{
+              console.log("get rob value :"+detail.state)
+            }
+          }
+         
+      }.bind(this))
 
     },
 
@@ -95,14 +127,14 @@ cc.Class({
             }
         }.bind(this))
 
-        //监听内部抢地主消息
+        //监听内部随可以抢地主消息,这个消息会发给每个playernode节点
         this.node.on("playernode_canrob_event",function(event){
             var detail = event
             console.log("------playernode_canrob_event detail:"+detail)
             if(detail==this.accountid){
               this.qiangdidzhu_node.active=true
-              this.tips_label.string ="正在抢地主" 
-              this.time_label.string="5"
+              //this.tips_label.string ="正在抢地主" 
+              this.time_label.string="10"
               //开启一个定时器
 
             }

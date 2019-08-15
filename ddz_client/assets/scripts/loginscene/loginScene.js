@@ -9,6 +9,7 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+        //console.log("qian_state.qian:"+ qian_state.qian)
         if(isopen_sound){
             cc.audioEngine.play(cc.url.raw("resources/sound/login_bg.ogg"),true) 
          }

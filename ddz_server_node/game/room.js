@@ -189,6 +189,7 @@ module.exports = function(roominfo,player){
             console.log("rob player end")
             return
         }
+        //弹出已经抢过的用户
         var can_player = that.robplayer.pop()
         for(var i=0;i<that._player_list.length;i++){
             //通知下一个可以抢地主的玩家
@@ -234,8 +235,8 @@ module.exports = function(roominfo,player){
         }else{
             console.log("playerRobmaster state error:"+data)
         }
-        if(player){
-            console,log("trun rob master end")
+        if(player==null){
+            console.log("trun rob master end")
             return
         }
         //广播这个用户抢地主状态(抢了或者不抢)
