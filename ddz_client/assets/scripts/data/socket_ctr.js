@@ -126,6 +126,13 @@ const socketCtr = function(){
             event.on("canrob_state_notify",callback)
          }
     }
+
+    //监听服务器:确定地主消息
+    that.onChangeMaster = function(callback){
+        if(callback){
+            event.on("change_master_notify",callback)
+         }
+    }
     return that
 }
 

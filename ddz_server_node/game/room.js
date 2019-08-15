@@ -2,10 +2,11 @@ const config = require("../defines.js")
 const Carder = require("./carder.js")
 const RoomState = {
     ROOM_INVALID: -1,
-    ROOM_WAITREADY: 1,
-    ROOM_GAMESTART: 2,
-    ROOM_PUSHCARD: 3,
-    ROOM_ROBSTATE:4,
+    ROOM_WAITREADY: 1,  //等待游戏
+    ROOM_GAMESTART: 2,  //开始游戏
+    ROOM_PUSHCARD: 3,   //发牌
+    ROOM_ROBSTATE:4,    //抢地主
+    ROOM_SHOWBOTTOMCARD:5, //显示底牌
 }
 const getRandomStr = function (count) {
     var str = '';
@@ -53,6 +54,7 @@ module.exports = function(roominfo,player){
     that.carder = Carder()
     that.lostplayer = undefined //下一次抢地主玩家
     that.robplayer = [] //复制一份房间内player,做抢地主操作
+    that.room_master = undefined //房间地主引用
 
     const changeState = function(state){
         if(that.state==state){
@@ -86,6 +88,8 @@ module.exports = function(roominfo,player){
                  }
                  turnRob()
                  break   
+             case RoomState.ROOM_SHOWBOTTOMCARD:
+                 break    
             default:
                 break    
         }
@@ -185,15 +189,32 @@ module.exports = function(roominfo,player){
     //发送下个玩家，开始抢地主
     const turnRob = function(){
         if(that.robplayer.length==0){
-            //都抢过了，直接退出
+            //都抢过了，需要确定最终地主人选,直接退出
             console.log("rob player end")
+            
             return
         }
         //弹出已经抢过的用户
         var can_player = that.robplayer.pop()
+        if(that.robplayer.length && that.room_master==undefined){
+            //没有抢地主，并且都抢过了,就设置为最后抢的玩家
+            that.room_master = can_player  
+            //return   
+        }
+        if(that.robplayer.length==0){
+            changeMaster(that.room_master._accountID)
+            return
+        }
         for(var i=0;i<that._player_list.length;i++){
             //通知下一个可以抢地主的玩家
             that._player_list[i].SendCanRob(can_player._accountID)
+        }
+    }
+
+    //客户端到服务器: 发送地主改变的消息
+    const changeMaster = function(){
+        for(var i=0;i<that._player_list.length;i++){
+            that._player_list[i].SendChangeMaster(that.room_master._accountID)
         }
     }
     //房主点击开始游戏按钮
@@ -225,13 +246,14 @@ module.exports = function(roominfo,player){
         changeState(RoomState.ROOM_GAMESTART)
     }
 
-    //处理玩家抢地主消息
+    //客户端到服务器: 处理玩家抢地主消息
     that.playerRobmaster = function(player,data){
         console.log("playerRobmaster value:"+data)
         if(config.qian_state.buqiang==data){
             //记录当前抢到地主的玩家id
+        
         }else if(config.qian_state.qian==data){
-
+            this.room_master = player
         }else{
             console.log("playerRobmaster state error:"+data)
         }
@@ -251,7 +273,7 @@ module.exports = function(roominfo,player){
         turnRob()
     }
   }
-    
+  
   return that
 }
 

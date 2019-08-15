@@ -120,6 +120,17 @@ cc.Class({
                 }
         }.bind(this))
 
+        //注册监听服务器确定地主消息
+        myglobal.socket.onChangeMaster(function(event){
+            console.log("onChangeMaster"+event)
+            for(var i=0;i<this.playerNodeList.length;i++){
+                var node = this.playerNodeList[i]
+                if(node){
+                    //给playernode节点发送事件
+                    node.emit("playernode_changemaster_event",event)
+                }
+            }
+        }.bind(this))
         //监听服务器push
     },
 

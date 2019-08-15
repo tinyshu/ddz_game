@@ -22,6 +22,7 @@ cc.Class({
         robIconSp: cc.Sprite,
         robIcon_Sp:cc.Node,
         robnoIcon_Sp:cc.Node,
+        masterIcon:cc.Node,
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -61,16 +62,25 @@ cc.Class({
             if(detail.state==qian_state.qian){
              
               console.log("this.robIcon_Sp.active = true")
-              this.robIcon_Sp.active = true;
+              this.robIcon_Sp.active = true
 
             }else if(detail.state==qian_state.buqiang){
-              this.robnoIcon_Sp.active = true;
+              this.robnoIcon_Sp.active = true
              
             }else{
               console.log("get rob value :"+detail.state)
             }
           }
          
+      }.bind(this))
+
+      this.node.on("playernode_changemaster_event",function(event){
+         var detail = event 
+         this.robIcon_Sp.active = false
+         this.robnoIcon_Sp.active = false
+         if(detail==this.accountid){
+            this.masterIcon.active = true
+          }
       }.bind(this))
 
     },

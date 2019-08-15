@@ -152,5 +152,10 @@ module.exports = function(info,socket,callindex,gamectr){
     that.sendRobState = function(data){
         _notify("canrob_state_notify",0,data,0)
     }
+
+    //发送当前地主是谁
+    that.SendChangeMaster = function(data){
+        _notify("change_master_notify",0,data,0)
+    }
    return that
 }
