@@ -86,6 +86,7 @@ module.exports = function(roominfo,player){
                  for(var i=that._player_list.length-1;i>=0;i--){
                     that.robplayer.push(that._player_list[i])
                  }
+                 console.log("that.robplayer length:"+that.robplayer.length)
                  turnRob()
                  break   
              case RoomState.ROOM_SHOWBOTTOMCARD:
@@ -191,20 +192,18 @@ module.exports = function(roominfo,player){
         if(that.robplayer.length==0){
             //都抢过了，需要确定最终地主人选,直接退出
             console.log("rob player end")
-            
+            changeMaster(that.room_master._accountID)
             return
         }
+
         //弹出已经抢过的用户
         var can_player = that.robplayer.pop()
-        if(that.robplayer.length && that.room_master==undefined){
+        if(that.robplayer.length==0 && that.room_master==undefined){
             //没有抢地主，并且都抢过了,就设置为最后抢的玩家
             that.room_master = can_player  
             //return   
         }
-        if(that.robplayer.length==0){
-            changeMaster(that.room_master._accountID)
-            return
-        }
+       
         for(var i=0;i<that._player_list.length;i++){
             //通知下一个可以抢地主的玩家
             that._player_list[i].SendCanRob(can_player._accountID)
@@ -269,9 +268,8 @@ module.exports = function(roominfo,player){
                 state:value,
             }
             that._player_list[i].sendRobState(data)
-
-        turnRob()
     }
+    turnRob()
   }
   
   return that
