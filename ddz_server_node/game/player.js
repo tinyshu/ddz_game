@@ -110,7 +110,12 @@ module.exports = function(info,socket,callindex,gamectr){
                            if(that._room){
                             that._room.playerRobmaster(that,data)
                            }
-                           break     
+                           break 
+                       case "chu_card_req":   //客户端发送出牌消息
+                            if(that._room){
+                                that._room.playerChuCard(that,data)
+                            }
+                           break        
             default:
                 break;    
         }
@@ -162,5 +167,10 @@ module.exports = function(info,socket,callindex,gamectr){
     that.SendShowBottomCard = function(data){
         _notify("change_showcard_notify",0,data,0)
     }
-   return that
+
+    that.SendChuCard = function(data){
+        _notify("can_chu_card_notify",0,data,0)
+    }
+
+    return that
 }

@@ -8,6 +8,7 @@ cc.Class({
         card_prefab:cc.Prefab,
         robUI:cc.Node,
         bottom_card_pos_node:cc.Node,
+        playingUI_node:cc.Node,
     },
 
     onLoad () {
@@ -49,7 +50,16 @@ cc.Class({
           
         }.bind(this))
         
-        //显示底牌事件,data是三张底牌数据
+        //监听服务器可以出牌消息
+        myglobal.socket.onCanChuCard(function(data){
+            console.log("onCanRobState"+JSON.stringify(data))
+            //判断是不是自己能出牌
+            if(data==myglobal.playerData.accountID){
+                this.playingUI_node.active = true
+            }
+        }.bind(this))
+
+        //内部事件:显示底牌事件,data是三张底牌数据
         this.node.on("show_bottom_card_event",function(data){
             this.bottom_card_data = data
             console.log("----show_bottom_card_event",+data)
@@ -85,6 +95,8 @@ cc.Class({
             
               
         }.bind(this))
+
+
     },
 
     start () {
@@ -217,6 +229,22 @@ cc.Class({
                     cc.audioEngine.play(cc.url.raw("resources/sound/woman_bu_jiao.ogg")) 
                  }
                  break    
+             case "nopushcard":  //不出牌
+                 myglobal.socket.request_chu_card([],null)
+                 this.playingUI_node.active = false
+                 break
+             case "pushcard":   //出牌
+                 //先获取本次出牌数据
+                 var chu_card_list = []
+                 for(var i=0;i<3;i++){
+                    chu_card_list[i]=this.cards_nods[i].getComponent("card").card_id
+                 }
+                 console.log("chu_card_list"+chu_card_list)
+                 myglobal.socket.request_chu_card(chu_card_list,null)
+                 this.playingUI_node.active = false
+                 break
+             case "tipcard":
+                 break            
             default:
                 break
         }

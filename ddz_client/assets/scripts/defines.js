@@ -1,6 +1,6 @@
 const defines = {};
 defines.serverUrl = "http://localhost:3000";
-const isopen_sound = 1;
+const isopen_sound = 0;
 //exports.roomFullPlayerCount = 3;
 qian_state = {
     "buqiang":0,

@@ -7,6 +7,7 @@ const RoomState = {
     ROOM_PUSHCARD: 3,   //发牌
     ROOM_ROBSTATE:4,    //抢地主
     ROOM_SHOWBOTTOMCARD:5, //显示底牌
+    ROOM_PLAYING:6,     //出牌阶段  
 }
 const getRandomStr = function (count) {
     var str = '';
@@ -56,7 +57,7 @@ module.exports = function(roominfo,player){
     that.robplayer = [] //复制一份房间内player,做抢地主操作
     that.room_master = undefined //房间地主引用
     that.three_cards = []  //三张底牌
-
+    that.playing_cards = [] //存储出牌的用户(一轮)
     const changeState = function(state){
         if(that.state==state){
             return   
@@ -92,7 +93,17 @@ module.exports = function(roominfo,player){
                  turnRob()
                  break   
              case RoomState.ROOM_SHOWBOTTOMCARD:
-                 break    
+                 //暂停s，让玩家看行底牌
+                 setTimeout(function(){
+                    changeState(RoomState.ROOM_PLAYING)
+                 },2000)
+                 break  
+             case RoomState.ROOM_PLAYING:
+                 
+                 resetChuCardPlayer()
+                 //下发出牌消息  
+                 turnchuCard()
+                 break      
             default:
                 break    
         }
@@ -189,12 +200,15 @@ module.exports = function(roominfo,player){
         }
     }
     
+  
     //发送下个玩家，开始抢地主
     const turnRob = function(){
         if(that.robplayer.length==0){
             //都抢过了，需要确定最终地主人选,直接退出
             console.log("rob player end")
             changeMaster(that.room_master._accountID)
+            //改变房间状态，显示底牌
+            changeState(RoomState.ROOM_SHOWBOTTOMCARD)
             return
         }
 
@@ -253,7 +267,45 @@ module.exports = function(roominfo,player){
         //gameStart()
         changeState(RoomState.ROOM_GAMESTART)
     }
+    
+    //一轮出牌完毕，调用这个函数重置出牌数组
+    const resetChuCardPlayer = function(){
+        var master_index = 0 //地主在列表中的位置 
+        for(var i=that._player_list.length-1;i>=0;i--){
+           if(that._player_list[i]._accountID==that.room_master._accountID){
+               master_index = i
+           }
+        }
 
+        var index = master_index
+        for(var i=that._player_list.length-1;i>=0;i--){
+           var real_index = index % that._player_list.length
+           console.log("real_index:"+real_index)
+           that.playing_cards[i] = that._player_list[real_index]
+           index++
+        }
+
+    }
+
+      //下发:谁出牌的消息
+      const turnchuCard = function(){
+      
+        var cur_chu_card_player = that.playing_cards.pop()
+        for(var i=0;i<that._player_list.length;i++){
+              //通知下一个出牌的玩家
+              that._player_list[i].SendChuCard(cur_chu_card_player._accountID)
+        }
+      }
+
+    //客户端发送到服务器:出牌消息
+    that.playerChuCard = function(player,data){
+        console.log("playerChuCard value:"+data)
+        //一轮出牌完毕，调用这个函数重置出牌数组
+        if(that.playing_cards.length==0){
+            resetChuCardPlayer()
+        }
+        turnchuCard()
+    }
     //客户端到服务器: 处理玩家抢地主消息
     that.playerRobmaster = function(player,data){
         console.log("playerRobmaster value:"+data)

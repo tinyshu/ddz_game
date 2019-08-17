@@ -20,6 +20,8 @@ cc.Class({
     // update (dt) {},
 
     showCards(card){
+        //card.index是服务器生成card给对象设置的一副牌里唯一id
+        this.card_id = card.index
         //this.node.getComponent(cc.Sprite).spriteFrame = 
         //服务器定义牌的表示
         // const cardvalue = {

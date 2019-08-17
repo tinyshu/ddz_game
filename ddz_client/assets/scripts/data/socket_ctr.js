@@ -73,6 +73,10 @@ const socketCtr = function(){
         _request("enterroom_req",req,callback)
     }
 
+    //发送出牌信息
+    that.request_chu_card =  function(req,callback){
+        _request("chu_card_req",req,callback)
+    }
     //监听其他玩家进入房间消息
     that.onPlayerJoinRoom = function(callback){
          event.on("player_joinroom_notify",callback)
@@ -139,6 +143,13 @@ const socketCtr = function(){
         if(callback){
             event.on("change_showcard_notify",callback)
          }
+    }
+
+    //监听服务器:可以出牌消息
+    that.onCanChuCard = function(callback){
+        if(callback){
+            event.on("can_chu_card_notify",callback)
+        }
     }
     return that
 }
