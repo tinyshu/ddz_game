@@ -12,12 +12,15 @@ cc.Class({
         players_seat_pos:cc.Node,
 
     },
+    //本局结束，做状态清除
+    gameEnd(){
 
+    },
     onLoad () {
         this.playerNodeList = []
         this.di_label.string = "底:" +  myglobal.playerData.bottom
         this.beishu_label.string = "倍数:" + myglobal.playerData.rate
-        
+        this.roomstate = RoomState.ROOM_INVALID
         //监听，给其他玩家发牌(内部事件)
         this.node.on("pushcard_other_event",function(){
             console.log("gamescene pushcard_other_event")
@@ -30,6 +33,12 @@ cc.Class({
             }
         }.bind(this))
 
+        //监听房间状态改变事件
+        myglobal.socket.onRoomChangeState(function(data){
+            //回调的函数参数是进入房间用户消息
+            console.log("onRoomChangeState:"+data)
+            this.roomstate = data
+        }.bind(this))
         //
         this.node.on("canrob_event",function(event){
             console.log("gamescene canrob_event:"+event)

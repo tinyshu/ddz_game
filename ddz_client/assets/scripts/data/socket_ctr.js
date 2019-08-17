@@ -151,6 +151,12 @@ const socketCtr = function(){
             event.on("can_chu_card_notify",callback)
         }
     }
+
+    that.onRoomChangeState = function(callback){
+        if(callback){
+            event.on("room_state_notify",callback)
+        }
+    }
     return that
 }
 

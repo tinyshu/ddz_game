@@ -96,7 +96,11 @@ module.exports = function(roominfo,player){
                  //暂停s，让玩家看行底牌
                  setTimeout(function(){
                     changeState(RoomState.ROOM_PLAYING)
-                 },2000)
+                    //下个当前状态给客户端
+                    for(var i=0;i<that._player_list.length;i++){
+                        that._player_list[i].sendRoomState(RoomState.ROOM_PLAYING)
+                    }
+                 },1000)
                  break  
              case RoomState.ROOM_PLAYING:
                  

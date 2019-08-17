@@ -172,5 +172,8 @@ module.exports = function(info,socket,callindex,gamectr){
         _notify("can_chu_card_notify",0,data,0)
     }
 
+    that.sendRoomState = function(data){
+        _notify("room_state_notify",0,data,0)
+    }
     return that
 }

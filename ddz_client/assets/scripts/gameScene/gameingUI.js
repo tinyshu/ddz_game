@@ -66,7 +66,6 @@ cc.Class({
             console.log("----show_bottom_card_event",+data)
             for(var i=0;i<data.length;i++){
                 var card = this.bottom_card[i]
-                //card.getComponent("card").showCards(data[i])
                 var show_data = data[i]
                 var call_data = {
                     "obj":card,
@@ -89,6 +88,8 @@ cc.Class({
                     cc.audioEngine.play(cc.url.raw("resources/sound/start.mp3")) 
                  }
             }
+
+            //this.node.parent.emit("change_room_state_event",RoomState.ROOM_PLAYING)
             //如果自己地主，给加上三张底牌
             if(myglobal.playerData.accountID==myglobal.playerData.master_accountid){
                 this.scheduleOnce(this.pushThreeCard.bind(this),0.2)
@@ -193,7 +194,7 @@ cc.Class({
         card.y = -250
         card.active = false
 
-        card.getComponent("card").showCards(data[i])
+        card.getComponent("card").showCards(data[i],myglobal.playerData.accountID)
         //存储牌的信息,用于后面发牌效果
         this.cards_nods.push(card)
         this.card_width = card.width
@@ -235,12 +236,13 @@ cc.Class({
             card.y = -250
            
             console.log("pushThreeCard x:"+card.x)
-            card.getComponent("card").showCards(this.bottom_card_data[i])
+            card.getComponent("card").showCards(this.bottom_card_data[i],myglobal.playerData.accountID)
             card.active = true
             this.cards_nods.push(card)
         }
 
         this.sortCard()
+       
     },
     // update (dt) {},
     onButtonClick(event,customData){

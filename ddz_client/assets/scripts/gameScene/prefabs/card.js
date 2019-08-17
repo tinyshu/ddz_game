@@ -8,7 +8,11 @@ cc.Class({
      
     },
 
-    // onLoad () {},
+    onLoad () {
+        this.flag = false
+        this.offset_y = 20
+        
+    },
 
     start () {
 
@@ -18,12 +22,34 @@ cc.Class({
 
     },
     // update (dt) {},
-
-    showCards(card){
+    setTouchEvent(){
+        if(this.accountid==myglobal.playerData.accountID){
+            this.node.on(cc.Node.EventType.TOUCH_START,function(){
+                var room_state = this.node.parent.getComponent("gameScene").roomstate
+                if(room_state==RoomState.ROOM_PLAYING){
+                    console.log("TOUCH_START id:"+this.card_id)
+                    if(this.flag==false){
+                        this.flag = true
+                        this.node.y += this.offset_y
+                    }else{
+                        this.flag=false
+                        this.node.y -= this.offset_y
+                    }
+                }
+              
+            }.bind(this))
+        }
+       
+    },
+    showCards(card,accountid){
         //card.index是服务器生成card给对象设置的一副牌里唯一id
         this.card_id = card.index
         //传入参数 card={"value":5,"shape":1,"index":20}
         this.card_data = card
+        if(accountid){
+            this.accountid = accountid //标识card属于的玩家
+        }
+       
         //this.node.getComponent(cc.Sprite).spriteFrame = 
         //服务器定义牌的表示
         // const cardvalue = {
@@ -91,6 +117,7 @@ cc.Class({
 
        // console.log("spriteKey"+spriteKey)
         this.node.getComponent(cc.Sprite).spriteFrame = this.cards_sprite_atlas.getSpriteFrame(spriteKey)
+        this.setTouchEvent()
     }
 });
 
