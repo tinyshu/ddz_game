@@ -22,6 +22,8 @@ cc.Class({
     showCards(card){
         //card.index是服务器生成card给对象设置的一副牌里唯一id
         this.card_id = card.index
+        //传入参数 card={"value":5,"shape":1,"index":20}
+        this.card_data = card
         //this.node.getComponent(cc.Sprite).spriteFrame = 
         //服务器定义牌的表示
         // const cardvalue = {
@@ -40,7 +42,7 @@ cc.Class({
         //     "K": 11,
         // }
         
-        //传入参数 card={"value":5,"shape":1,"index":20}
+       
         //服务器返回的是key,value对应的是资源的编号
         const CardValue = {
             "12": 1,

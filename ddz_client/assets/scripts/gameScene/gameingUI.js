@@ -12,6 +12,7 @@ cc.Class({
     },
 
     onLoad () {
+        //自己牌列表 
         this.cards_nods = []
         this.card_width = 0
         //当前可以抢地主的accountid
@@ -135,6 +136,35 @@ cc.Class({
         this.scheduleOnce(this._runactive_pushcard.bind(this),0.3)
     },
  
+    //对牌排序
+    sortCard(){
+        this.cards_nods.sort(function(x,y){
+            var a = x.getComponent("card").card_data;
+            var b = y.getComponent("card").card_data;
+
+            if (a.hasOwnProperty('value') && b.hasOwnProperty('value')) {
+                return b.value - a.value;
+            }
+            if (a.hasOwnProperty('king') && !b.hasOwnProperty('king')) {
+                return -1;
+            }
+            if (!a.hasOwnProperty('king') && b.hasOwnProperty('king')) {
+                return 1;
+            }
+            if (a.hasOwnProperty('king') && b.hasOwnProperty('king')) {
+                return b.king - a.king;
+            }
+        })
+
+        let x = this.cards_nods[0].x;
+
+        for (let i = 0; i < this.cards_nods.length; i++) {
+            var card = this.cards_nods[i];
+            card.zIndex = i;
+            card.x = x + card.width * 0.4 * i;
+        }
+    },
+
     pushCard(data){
     if (data) {
             data.sort(function (a, b) {
@@ -209,6 +239,8 @@ cc.Class({
             card.active = true
             this.cards_nods.push(card)
         }
+
+        this.sortCard()
     },
     // update (dt) {},
     onButtonClick(event,customData){
