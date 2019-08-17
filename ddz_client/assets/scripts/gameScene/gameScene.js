@@ -131,7 +131,17 @@ cc.Class({
                 }
             }
         }.bind(this))
-        //监听服务器push
+        
+        //注册监听服务器显示底牌消息
+        myglobal.socket.onShowBottomCard(function(event){
+           console.log("onShowBottomCard"+event)
+           var gameui_node =  this.node.getChildByName("gameingUI")
+           if(gameui_node==null){
+              console.log("get childer name gameingUI")
+              return
+           }
+           gameui_node.emit("show_bottom_card_event",event)
+        }.bind(this))
     },
 
     //seat_index自己在房间的位置id

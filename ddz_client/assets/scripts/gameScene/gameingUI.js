@@ -16,6 +16,8 @@ cc.Class({
         this.rob_player_accountid = 0
         //发牌动画是否结束
         this.fapai_end = false
+        //底牌数组
+        this.bottom_card = []
         //监听服务器:下发牌消息
         myglobal.socket.onPushCards(function(data){
             console.log("onPushCards"+JSON.stringify(data))
@@ -43,7 +45,34 @@ cc.Class({
             }
           
         }.bind(this))
- 
+        
+       
+        this.node.on("show_bottom_card_event",function(data){
+           
+            for(var i=0;i<data.length;i++){
+                var card = this.bottom_card[i]
+                //card.getComponent("card").showCards(data[i])
+                var show_data = data[i]
+                var call_data = {
+                    "obj":card,
+                    "data":show_data,
+                }
+                console.log("bottom show_data:"+JSON.stringify(show_data))
+                var run =  cc.callFunc(function(target,activedata){
+                   
+                    var show_card = activedata.obj
+                    var show_data = activedata.data
+                    //console.log("cc.callFunc:"+JSON.stringify(show_data))
+                    show_card.getComponent("card").showCards(show_data)
+                   
+                },this,call_data)
+
+                card.runAction(cc.sequence(cc.rotateBy(0,0,180),cc.rotateBy(0.2,0,-90), run,
+                cc.rotateBy(0.2,0,-90)));
+               
+            }
+                   
+        }.bind(this))
     },
 
     start () {
@@ -58,8 +87,6 @@ cc.Class({
             this.fapai_end = true
             if(this.rob_player_accountid==myglobal.playerData.accountID){
                 this.robUI.active = true
-                
-               
             }
 
             if(isopen_sound){
@@ -102,6 +129,7 @@ cc.Class({
             });
         }
       //创建card预制体
+      this.cards_nods = []
       for(var i=0;i<17;i++){
         
         var card = cc.instantiate(this.card_prefab)
@@ -118,12 +146,20 @@ cc.Class({
       }
       
       //创建3张底牌
+      this.bottom_card = []
       for(var i=0;i<3;i++){
         var di_card = cc.instantiate(this.card_prefab)
-        di_card.scale=0.8
+        di_card.scale=0.6
+        // if(i==0){
+        //     di_card.x = di_card.width-i*di_card.width-20
+        // }else{
+        //     di_card.x = this.bottom_card[i-1].x + di_card.width
+        // }
         di_card.x = di_card.width-i*di_card.width-20
         di_card.y=60
         di_card.parent = this.node.parent
+        //存储在容器里
+        this.bottom_card.push(di_card)
       }
 
     },

@@ -133,6 +133,13 @@ const socketCtr = function(){
             event.on("change_master_notify",callback)
          }
     }
+
+    //监听服务器:显示底牌消息
+    that.onShowBottomCard = function(callback){
+        if(callback){
+            event.on("change_showcard_notify",callback)
+         }
+    }
     return that
 }
 

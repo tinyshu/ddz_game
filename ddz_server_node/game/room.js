@@ -43,18 +43,19 @@ module.exports = function(roominfo,player){
     var tconfig = config.createRoomConfig[roominfo.rate]
     //console.log("config"+JSON.stringify(tconfig))
 
-    that.own_player = player
+    that.own_player = player              //创建房间的玩家
     that.bottom = tconfig.bottom
-    that.rate = tconfig.rate
-    that.gold =  that.rate * that.bottom
-    that.house_manage = player
-    that.state = RoomState.ROOM_INVALID
+    that.rate = tconfig.rate              //倍数  
+    that.gold =  that.rate * that.bottom //基数 
+    that.house_manage = player          //房主(不是地主)
+    that.state = RoomState.ROOM_INVALID //房间状态
     //初始化发牌器对象
     //实例化牌和洗牌在构造函数完成
-    that.carder = Carder()
+    that.carder = Carder()  //发牌对象
     that.lostplayer = undefined //下一次抢地主玩家
     that.robplayer = [] //复制一份房间内player,做抢地主操作
     that.room_master = undefined //房间地主引用
+    that.three_cards = []  //三张底牌
 
     const changeState = function(state){
         if(that.state==state){
@@ -73,6 +74,7 @@ module.exports = function(roominfo,player){
                 break
             case RoomState.ROOM_PUSHCARD:
                 console.log("push card state")
+                //这个函数把54张牌分成4份[玩家1，玩家2，玩家3,底牌]
                 that.three_cards = that.carder.splitThreeCards()
                 for(var i=0;i<that._player_list.length;i++){
                     that._player_list[i].sendCard(that.three_cards[i])
@@ -215,6 +217,13 @@ module.exports = function(roominfo,player){
         for(var i=0;i<that._player_list.length;i++){
             that._player_list[i].SendChangeMaster(that.room_master._accountID)
         }
+
+        //显示底牌
+        for(var i=0;i<that._player_list.length;i++){
+            //把三张底牌的消息发送给房间里的用户
+            that._player_list[i].SendShowBottomCard(that.three_cards[3])
+        }
+
     }
     //房主点击开始游戏按钮
     that.playerStart = function(player,cb){

@@ -1,4 +1,4 @@
-//表示一张牌
+//表示一张牌对象
 module.exports = function(value,shape,king){
     var that = {}
     that.index = -1

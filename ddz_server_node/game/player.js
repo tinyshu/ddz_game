@@ -157,5 +157,10 @@ module.exports = function(info,socket,callindex,gamectr){
     that.SendChangeMaster = function(data){
         _notify("change_master_notify",0,data,0)
     }
+
+    //发送给客户端:显示底牌
+    that.SendShowBottomCard = function(data){
+        _notify("change_showcard_notify",0,data,0)
+    }
    return that
 }
