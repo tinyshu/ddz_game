@@ -252,7 +252,7 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -57,
+      "x": -29,
       "y": 113,
       "z": 0
     },
@@ -340,7 +340,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 44.19,
+      "width": 77.56,
       "height": 20
     },
     "_anchorPoint": {
@@ -350,8 +350,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -1,
-      "y": 113,
+      "x": -27,
+      "y": 137,
       "z": 0
     },
     "_scale": {
@@ -383,8 +383,8 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_string": "ID:123",
-    "_N$string": "ID:123",
+    "_string": "ID:1235596",
+    "_N$string": "ID:1235596",
     "_fontSize": 15,
     "_lineHeight": 20,
     "_enableWrapText": true,

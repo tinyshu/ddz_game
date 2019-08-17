@@ -7,6 +7,7 @@ cc.Class({
         gameingUI: cc.Node,
         card_prefab:cc.Prefab,
         robUI:cc.Node,
+        bottom_card_pos_node:cc.Node,
     },
 
     onLoad () {
@@ -18,6 +19,8 @@ cc.Class({
         this.fapai_end = false
         //底牌数组
         this.bottom_card = []
+        //底牌的json对象数据
+        this.bottom_card_data=[]
         //监听服务器:下发牌消息
         myglobal.socket.onPushCards(function(data){
             console.log("onPushCards"+JSON.stringify(data))
@@ -46,9 +49,10 @@ cc.Class({
           
         }.bind(this))
         
-       
+        //显示底牌事件,data是三张底牌数据
         this.node.on("show_bottom_card_event",function(data){
-           
+            this.bottom_card_data = data
+            console.log("----show_bottom_card_event",+data)
             for(var i=0;i<data.length;i++){
                 var card = this.bottom_card[i]
                 //card.getComponent("card").showCards(data[i])
@@ -70,8 +74,16 @@ cc.Class({
                 card.runAction(cc.sequence(cc.rotateBy(0,0,180),cc.rotateBy(0.2,0,-90), run,
                 cc.rotateBy(0.2,0,-90)));
                
+                if(isopen_sound){
+                    cc.audioEngine.play(cc.url.raw("resources/sound/start.mp3")) 
+                 }
             }
-                   
+            //如果自己地主，给加上三张底牌
+            if(myglobal.playerData.accountID==myglobal.playerData.master_accountid){
+                this.scheduleOnce(this.pushThreeCard.bind(this),0.2)
+            }
+            
+              
         }.bind(this))
     },
 
@@ -149,19 +161,42 @@ cc.Class({
       this.bottom_card = []
       for(var i=0;i<3;i++){
         var di_card = cc.instantiate(this.card_prefab)
-        di_card.scale=0.6
-        // if(i==0){
-        //     di_card.x = di_card.width-i*di_card.width-20
-        // }else{
-        //     di_card.x = this.bottom_card[i-1].x + di_card.width
-        // }
-        di_card.x = di_card.width-i*di_card.width-20
-        di_card.y=60
+        di_card.scale=0.4
+        di_card.position = this.bottom_card_pos_node.position 
+        if(i==0){
+            
+            di_card.x = di_card.x - di_card.width*0.4
+        }else if(i==2){
+            di_card.x = di_card.x + di_card.width*0.4
+        }
+        
+
+        //di_card.x = di_card.width-i*di_card.width-20
+        //di_card.y=60
         di_card.parent = this.node.parent
         //存储在容器里
         this.bottom_card.push(di_card)
       }
 
+    },
+
+    //给地主发三张排，并显示在原有牌的后面
+    pushThreeCard(){
+        //每张牌的其实位置 
+        var last_card_x =  this.cards_nods[ this.cards_nods.length-1].x
+        for(var i=0;i<this.bottom_card_data.length;i++){
+            var card = cc.instantiate(this.card_prefab)
+            card.scale=0.8
+            card.parent = this.node.parent
+          
+            card.x = last_card_x + ((i+1)*this.card_width * 0.4)
+            card.y = -250
+           
+            console.log("pushThreeCard x:"+card.x)
+            card.getComponent("card").showCards(this.bottom_card_data[i])
+            card.active = true
+            this.cards_nods.push(card)
+        }
     },
     // update (dt) {},
     onButtonClick(event,customData){

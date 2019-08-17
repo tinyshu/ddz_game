@@ -83,6 +83,13 @@ cc.Class({
           }
       }.bind(this))
 
+      // this.node.on("playernode_add_three_card",function(event){
+      //   var detail = event //地主的accountid
+      //   if(detail==this.accountid){
+      //     //给地主发三张排
+
+      //   }
+      // }.bind(this))
     },
 
     start () {

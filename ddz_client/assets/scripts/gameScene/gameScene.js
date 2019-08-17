@@ -17,7 +17,7 @@ cc.Class({
         this.playerNodeList = []
         this.di_label.string = "底:" +  myglobal.playerData.bottom
         this.beishu_label.string = "倍数:" + myglobal.playerData.rate
-
+        
         //监听，给其他玩家发牌(内部事件)
         this.node.on("pushcard_other_event",function(){
             console.log("gamescene pushcard_other_event")
@@ -42,6 +42,18 @@ cc.Class({
                 }
             }
         }.bind(this))
+
+        //监听给玩家添加三张底牌
+        // this.node.on("add_three_card",function(event){
+        //     console.log("add_three_card:"+event)
+        //     for(var i=0;i<this.playerNodeList.length;i++){
+        //         var node = this.playerNodeList[i]
+        //         if(node){
+        //             //给playernode节点发送事件
+        //             node.emit("playernode_add_three_card",event)
+        //         }
+        //     }
+        // }.bind(this))
 
         myglobal.socket.request_enter_room({},function(err,result){
             console.log("enter_room_resp"+ JSON.stringify(result))
@@ -123,6 +135,8 @@ cc.Class({
         //注册监听服务器确定地主消息
         myglobal.socket.onChangeMaster(function(event){
             console.log("onChangeMaster"+event)
+            //保存一下地主id
+            myglobal.playerData.master_accountid = event
             for(var i=0;i<this.playerNodeList.length;i++){
                 var node = this.playerNodeList[i]
                 if(node){

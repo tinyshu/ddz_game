@@ -17,6 +17,7 @@ const playerData = function(){
     var str = "avatar_" + (Math.floor(Math.random() * 3) + 1)
     that.avatarUrl = str   //随机一个头像
     that.gobal_count = 0
+    that.master_accountid=0
     return that;
 }
 
