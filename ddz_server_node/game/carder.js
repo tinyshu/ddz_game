@@ -93,5 +93,18 @@ module.exports = function(){
         return [threeCards[0],threeCards[1],threeCards[2],that.card_list]
     }
 
+ 
+    const isOneCard = function (cardList) {
+        if (cardList.length === 1) {
+            return true;
+        }
+        return false;
+    }
+
+    that.IsCanPushs = function(cardList){
+        if (isOneCard(cardList)) {
+            return true;
+        }
+    }
     return that
 }

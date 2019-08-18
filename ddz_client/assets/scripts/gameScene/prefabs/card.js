@@ -12,8 +12,27 @@ cc.Class({
         this.flag = false
         this.offset_y = 20
         
+        this.node.on("reset_card_flag",function(event){
+            if(this,flag==true){
+                this,flag = false
+                this.node.y -= this.offset_y
+            }
+        }.bind(this))
+
+        // this.node.on("chu_card_succ",function(event){
+        //    var chu_card_list = event
+        //    for(var i=0;i<chu_card_list.length;i++){
+        //     if(chu_card_list[i].card_id==this.card_id){
+        //         //this.runToCenter(chu_card_list[i])
+        //         //this.node.destory()
+        //     }
+        //    }
+        // }.bind(this))
     },
 
+    runToCenter(){
+        //移动到屏幕中间，并带一个牌缩小的效果
+    },
     start () {
 
     },

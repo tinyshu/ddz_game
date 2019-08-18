@@ -312,22 +312,13 @@ module.exports = function(roominfo,player){
         turnchuCard()
     }
 
-    //判断牌型是否合格
-    const IsCanPushs = function(cars_list){
-        return false
-        if(cars_list.length==0){
-            return true
-        }
-        return true
-    }
-
     const compareWithCard = function(card_list){
         return true
     } 
     that.playerChuCard = function(player,data,cb){
-        //console.log("-----playerChuCard value-----:"+data)
+        
         //先判断牌型是否满足规则
-        if(false==IsCanPushs(that.cur_push_card_list)){
+        if(false==that.carder.IsCanPushs(that.cur_push_card_list)){
             resp = {
                 data:{
                       account:player._accountID,
@@ -337,7 +328,7 @@ module.exports = function(roominfo,player){
             cb(-1,resp)
             return
         }
-
+        //当前没有完成出过牌
         if(that.cur_push_card_list.length==0){
             resp = {
                 data:{
@@ -346,6 +337,8 @@ module.exports = function(roominfo,player){
                     }
             }
             cb(0,resp)
+            //让下一个玩家出牌,并发送消息
+            that.playerBuChuCard(null,null)
         }else{
             //和上次玩家出牌进行比较
             if(false==compareWithCard(that.cur_push_card_list)){

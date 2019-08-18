@@ -10,6 +10,7 @@ cc.Class({
         bottom_card_pos_node:cc.Node,
         playingUI_node:cc.Node,
         tipsLabel:cc.Label, //玩家出牌不合法的tips
+    
     },
 
     onLoad () {
@@ -25,6 +26,7 @@ cc.Class({
         //底牌的json对象数据
         this.bottom_card_data=[]
         this.choose_card_data=[]
+        this.outcar_zone = []
         //监听服务器:下发牌消息
         myglobal.socket.onPushCards(function(data){
             console.log("onPushCards"+JSON.stringify(data))
@@ -58,14 +60,20 @@ cc.Class({
             console.log("onCanRobState"+JSON.stringify(data))
             //判断是不是自己能出牌
             if(data==myglobal.playerData.accountID){
+                //先清理出牌区域
+                this.clearOutZone(myglobal.playerData.accountID)
+                //先把自己出牌列表置空
+                //this.choose_card_data=[]
+                //显示可以出牌的UI
                 this.playingUI_node.active = true
+
             }
         }.bind(this))
 
         //内部事件:显示底牌事件,data是三张底牌数据
         this.node.on("show_bottom_card_event",function(data){
             console.log("----show_bottom_card_event",+data)
-            
+          
             this.bottom_card_data = data
             
             for(var i=0;i<data.length;i++){
@@ -176,16 +184,22 @@ cc.Class({
                 return b.king - a.king;
             }
         })
-
         //var x = this.cards_nods[0].x;
         //这里使用固定坐标，因为取this.cards_nods[0].xk可能排序为完成，导致x错误
-        var x = -417.6 
-        console.log("sort x:"+ x)
-        for (let i = 0; i < this.cards_nods.length; i++) {
-            var card = this.cards_nods[i];
-            card.zIndex = i;
-            card.x = x + card.width * 0.4 * i;
-        }
+        //所以做1000毫秒的延时
+        var timeout = 1000
+        setTimeout(function(){
+            //var x = -417.6 
+            var x = this.cards_nods[0].x;
+            console.log("sort x:"+ x)
+            for (let i = 0; i < this.cards_nods.length; i++) {
+                var card = this.cards_nods[i];
+                card.zIndex = i;
+                card.x = x + card.width * 0.4 * i;
+            }
+        }.bind(this), timeout);
+        
+       
     },
 
     pushCard(data){
@@ -277,6 +291,84 @@ cc.Class({
         this.scheduleOnce(this.schedulePushThreeCard.bind(this),2)
 
     },
+
+    destoryCard(accountid,choose_card){
+        if(choose_card.length==0){
+            return
+        }
+
+        /*出牌逻辑
+          1. 将选中的牌 从父节点中移除
+          2. 从this.cards_nods 数组中，删除 选中的牌 
+          3. 将 “选中的牌” 添加到出牌区域
+              3.1 清空出牌区域
+              3.2 添加子节点
+              3.3 设置scale
+              3.4 设置position
+          4.  重新设置手中的牌的位置  this.updateCards();
+        */
+        //1/2步骤删除自己手上的card节点 
+        var destroy_card = []
+        for(var i=0;i<choose_card.length;i++){
+            for(var j=0;j<this.cards_nods.length;j++){
+                var card_id = this.cards_nods[j].getComponent("card").card_id
+                if(card_id==choose_card[i].cardid){
+                    console.log("destroy card id:"+card_id)
+                    //this.cards_nods[j].destroy()
+                    this.cards_nods[j].removeFromParent(true);   // 1
+                    destroy_card.push(this.cards_nods[j])
+                    this.cards_nods.splice(j,1)
+                }
+            }
+        }
+
+        this.appendCardsToOutZone(accountid,destroy_card)
+        this.updateCards()
+
+    },
+
+    clearOutZone(accountid){
+        var gameScene_script = this.node.parent.getComponent("gameScene")
+        var outCard_node = gameScene_script.getUserOutCardPosByAccount(accountid)
+        var children = outCard_node.children;
+        for(var i=0;i<children.length;i++){
+            var card = children[i]; 
+            card.destroy()
+        }
+        outCard_node.removeAllChildren(true);
+    },
+    //将 “选中的牌” 添加到出牌区域
+    appendCardsToOutZone(accountid,destroy_card){
+        if(destroy_card.length==0){
+            return
+        }
+       console.log("appendCardsToOutZone")
+       var gameScene_script = this.node.parent.getComponent("gameScene")
+       var outCard_node = gameScene_script.getUserOutCardPosByAccount(accountid)
+       console.log("OutZone:"+outCard_node.name)
+       //先清空出牌区域子节点
+       outCard_node.removeAllChildren(true);
+       //添加新的子节点
+       for(var i=0;i<destroy_card.length;i++){
+           var card = destroy_card[i]; 
+           outCard_node.addChild(card)
+       }
+
+       //对出牌进行排序
+       //设置出牌节点的坐标
+       for(var i=0;i<destroy_card.length;i++){
+        var cardNode = outCard_node.getChildren()[i]
+        var x = (i*this.card_width * 0.4);
+        var y = cardNode.y+360;
+        console.log("cardNode:x"+x+" y:"+y)
+        cardNode.setScale(0.7, 0.7);                   
+        cardNode.setPosition(x, y);                     
+
+       }
+    },
+    updateCards(){
+        this.sortCard()
+    },
     // update (dt) {},
     onButtonClick(event,customData){
         switch(customData){
@@ -302,6 +394,12 @@ cc.Class({
                  break
              case "pushcard":   //出牌
                  //先获取本次出牌数据
+                 if(this.choose_card_data.length==0){
+                    this.tipsLabel.string="请选择牌!"
+                    setTimeout(function(){
+                        this.tipsLabel.string=""
+                    }.bind(this), 2000);
+                 }
                  myglobal.socket.request_chu_card(this.choose_card_data,function(err,data){
                    
                     if(err){
@@ -314,9 +412,19 @@ cc.Class({
                             }.bind(this), 2000);
                         }
                         
+                        //出牌失败，把选择的牌归位
+                        for(var i=0;i<this.cards_nods.length;i++){
+                            var card = this.cards_nods[i]
+                            card.emit("reset_card_flag")
+                        }
+                        this.choose_card_data = []
                      }else{
+                         //出牌成功
                          console.log("request_chu_card data:"+JSON.stringify(data))
                          this.playingUI_node.active = false
+                         this.destoryCard(data.account,this.choose_card_data)
+                         this.choose_card_data = []
+                     
                      }
                     
                  }.bind(this))

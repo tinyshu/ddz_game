@@ -93,7 +93,7 @@ cc.Class({
               //enter_room成功
               //notify ={"seatid":1,"playerdata":[{"accountid":"2117836","nick_name":"tiny543","avatarUrl":"http://xxx","goldcount":1000}]}
                 var seatid = result.seatindex //自己在房间里的seatid
-                this.playerdata_list_pos = []  //创建一个空用户列表
+                this.playerdata_list_pos = []  //3个用户创建一个空用户列表
                 this.setPlayerSeatPos(seatid)
 
                 var playerdata_list = result.playerdata
@@ -195,7 +195,7 @@ cc.Class({
         }
 
         console.log("setPlayerSeatPos seat_index:" + seat_index)
-        var children = this.players_seat_pos.children;
+       
         //界面位置转化成逻辑位置
         switch(seat_index){
             case 1:
@@ -227,7 +227,7 @@ cc.Class({
         //创建的节点存储在gamescene的列表中
         this.playerNodeList.push(playernode_inst)
 
-        //玩家在room里的位置索引
+        //玩家在room里的位置索引(逻辑位置)
         var index = this.playerdata_list_pos[player_data.seatindex]
         console.log("index "+player_data.seatindex+ " "+index)
         playernode_inst.position = this.players_seat_pos.children[index].position
@@ -237,5 +237,25 @@ cc.Class({
     start () {
     },
 
+    getUserOutCardPosByAccount(accountid){
+        console.log("getUserOutCardPosByAccount accountid:"+accountid)
+        for(var i=0;i<this.playerNodeList.length;i++){
+            var node = this.playerNodeList[i]
+            if(node){
+                var node_script = node.getComponent("player_node")
+               
+                if(node_script.accountid===accountid){
+                  var seat_node = this.players_seat_pos.children[node_script.seat_index]
+                  var index_name = "cardsoutzone"+node_script.seat_index
+                  console.log("getUserOutCardPosByAccount index_name:"+index_name)
+                  var out_card_node = seat_node.getChildByName(index_name)
+                  console.log("OutZone:"+ out_card_node.name)
+                  return out_card_node
+                }
+            }
+        }
+
+        return null
+    },
     // update (dt) {},
 });
