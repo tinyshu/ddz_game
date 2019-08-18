@@ -24,16 +24,25 @@ cc.Class({
     // update (dt) {},
     setTouchEvent(){
         if(this.accountid==myglobal.playerData.accountID){
-            this.node.on(cc.Node.EventType.TOUCH_START,function(){
-                var room_state = this.node.parent.getComponent("gameScene").roomstate
+            this.node.on(cc.Node.EventType.TOUCH_START,function(event){
+                var gameScene_node = this.node.parent  
+                var room_state = gameScene_node.getComponent("gameScene").roomstate
                 if(room_state==RoomState.ROOM_PLAYING){
                     console.log("TOUCH_START id:"+this.card_id)
                     if(this.flag==false){
                         this.flag = true
                         this.node.y += this.offset_y
+                        //通知gameui层选定的牌
+                        var carddata = {
+                            "cardid":this.card_id,
+                            "card_data":this.card_data,
+                        }
+                        gameScene_node.emit("choose_card_event",carddata)
                     }else{
                         this.flag=false
                         this.node.y -= this.offset_y
+                        //通知gameUI取消了那张牌
+                       gameScene_node.emit("unchoose_card_event",this.card_id)
                     }
                 }
               

@@ -58,6 +58,7 @@ module.exports = function(roominfo,player){
     that.room_master = undefined //房间地主引用
     that.three_cards = []  //三张底牌
     that.playing_cards = [] //存储出牌的用户(一轮)
+    that.cur_push_card_list = [] //当前玩家出牌列表
     const changeState = function(state){
         if(that.state==state){
             return   
@@ -302,13 +303,69 @@ module.exports = function(roominfo,player){
       }
 
     //客户端发送到服务器:出牌消息
-    that.playerChuCard = function(player,data){
-        console.log("playerChuCard value:"+data)
+    that.playerBuChuCard = function(player,data){
+       
         //一轮出牌完毕，调用这个函数重置出牌数组
         if(that.playing_cards.length==0){
             resetChuCardPlayer()
         }
         turnchuCard()
+    }
+
+    //判断牌型是否合格
+    const IsCanPushs = function(cars_list){
+        return false
+        if(cars_list.length==0){
+            return true
+        }
+        return true
+    }
+
+    const compareWithCard = function(card_list){
+        return true
+    } 
+    that.playerChuCard = function(player,data,cb){
+        //console.log("-----playerChuCard value-----:"+data)
+        //先判断牌型是否满足规则
+        if(false==IsCanPushs(that.cur_push_card_list)){
+            resp = {
+                data:{
+                      account:player._accountID,
+                      msg:"choose card is gulre error",
+                    }
+            }
+            cb(-1,resp)
+            return
+        }
+
+        if(that.cur_push_card_list.length==0){
+            resp = {
+                data:{
+                      account:player._accountID,
+                      msg:"choose card sucess",
+                    }
+            }
+            cb(0,resp)
+        }else{
+            //和上次玩家出牌进行比较
+            if(false==compareWithCard(that.cur_push_card_list)){
+                resp = {
+                    data:{
+                          account:player._accountID,
+                          msg:"push card is compare card error",
+                        }
+                }
+                cb(-2,resp)
+            }else{
+                resp = {
+                    data:{
+                          account:player._accountID,
+                          msg:"choose card sucess",
+                        }
+                }
+                cb(0,resp)
+            }
+        }
     }
     //客户端到服务器: 处理玩家抢地主消息
     that.playerRobmaster = function(player,data){

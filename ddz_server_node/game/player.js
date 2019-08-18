@@ -111,11 +111,25 @@ module.exports = function(info,socket,callindex,gamectr){
                             that._room.playerRobmaster(that,data)
                            }
                            break 
-                       case "chu_card_req":   //客户端发送出牌消息
+                       case "chu_bu_card_req":   //客户端发送出牌消息
                             if(that._room){
-                                that._room.playerChuCard(that,data)
+                                that._room.playerBuChuCard(that,data)
                             }
-                           break        
+                           break   
+                       case "chu_card_req":
+                            if(that._room){
+                               
+                                console.log("that._room")
+                                that._room.playerChuCard(that,data,function(err,result){
+                                    if(err){
+                                      console.log("playerChuCard cb err:"+err+" "+result)
+                                      _notify("chu_card_res",err,result.data,callindex)
+                                                
+                                    }
+                                     _notify("chu_card_res",err,result.data,callindex)
+                                })
+                            }
+                           break         
             default:
                 break;    
         }

@@ -52,6 +52,26 @@ cc.Class({
             }
         }.bind(this))
 
+        this.node.on("choose_card_event",function(event){
+            console.log("--------choose_card_event-----------")
+            var gameui_node =  this.node.getChildByName("gameingUI")
+            if(gameui_node==null){
+               console.log("get childer name gameingUI")
+               return
+            }
+            gameui_node.emit("choose_card_event",event)
+           
+        }.bind(this))
+
+        this.node.on("unchoose_card_event",function(event){
+            console.log("--------unchoose_card_event-----------")
+            var gameui_node =  this.node.getChildByName("gameingUI")
+            if(gameui_node==null){
+               console.log("get childer name gameingUI")
+               return
+            }
+            gameui_node.emit("unchoose_card_event",event)
+        }.bind(this))
         //监听给玩家添加三张底牌
         // this.node.on("add_three_card",function(event){
         //     console.log("add_three_card:"+event)
@@ -157,7 +177,7 @@ cc.Class({
         
         //注册监听服务器显示底牌消息
         myglobal.socket.onShowBottomCard(function(event){
-           console.log("onShowBottomCard"+event)
+           console.log("onShowBottomCard---------"+event)
            var gameui_node =  this.node.getChildByName("gameingUI")
            if(gameui_node==null){
               console.log("get childer name gameingUI")

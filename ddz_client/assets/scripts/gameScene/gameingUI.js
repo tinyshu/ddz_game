@@ -9,6 +9,7 @@ cc.Class({
         robUI:cc.Node,
         bottom_card_pos_node:cc.Node,
         playingUI_node:cc.Node,
+        tipsLabel:cc.Label, //玩家出牌不合法的tips
     },
 
     onLoad () {
@@ -23,6 +24,7 @@ cc.Class({
         this.bottom_card = []
         //底牌的json对象数据
         this.bottom_card_data=[]
+        this.choose_card_data=[]
         //监听服务器:下发牌消息
         myglobal.socket.onPushCards(function(data){
             console.log("onPushCards"+JSON.stringify(data))
@@ -62,8 +64,10 @@ cc.Class({
 
         //内部事件:显示底牌事件,data是三张底牌数据
         this.node.on("show_bottom_card_event",function(data){
-            this.bottom_card_data = data
             console.log("----show_bottom_card_event",+data)
+            
+            this.bottom_card_data = data
+            
             for(var i=0;i<data.length;i++){
                 var card = this.bottom_card[i]
                 var show_data = data[i]
@@ -82,7 +86,7 @@ cc.Class({
                 },this,call_data)
 
                 card.runAction(cc.sequence(cc.rotateBy(0,0,180),cc.rotateBy(0.2,0,-90), run,
-                cc.rotateBy(0.2,0,-90)));
+                cc.rotateBy(0.2,0,-90),cc.scaleBy(1, 1.5)));
                
                 if(isopen_sound){
                     cc.audioEngine.play(cc.url.raw("resources/sound/start.mp3")) 
@@ -98,6 +102,22 @@ cc.Class({
               
         }.bind(this))
 
+        //注册监听一个选择牌消息 
+        this.node.on("choose_card_event",function(event){
+            console.log("choose_card_event:"+JSON.stringify(event))
+            var detail = event
+            this.choose_card_data.push(detail)
+        }.bind(this))
+
+        this.node.on("unchoose_card_event",function(event){
+            console.log("unchoose_card_event:"+ event)
+            var detail = event
+            for(var i=0;i<this.choose_card_data.length;i++){
+                if(this.choose_card_data[i].cardid==detail){
+                    this.choose_card_data.splice(i,1)
+                }
+            }
+        }.bind(this))
 
     },
 
@@ -157,8 +177,10 @@ cc.Class({
             }
         })
 
-        let x = this.cards_nods[0].x;
-
+        //var x = this.cards_nods[0].x;
+        //这里使用固定坐标，因为取this.cards_nods[0].xk可能排序为完成，导致x错误
+        var x = -417.6 
+        console.log("sort x:"+ x)
         for (let i = 0; i < this.cards_nods.length; i++) {
             var card = this.cards_nods[i];
             card.zIndex = i;
@@ -223,26 +245,37 @@ cc.Class({
 
     },
 
+
+    schedulePushThreeCard(){
+        for(var i=0;i<this.cards_nods.length;i++){
+            var card = this.cards_nods[i]
+            if(card.y==-230){
+                card.y = -250
+            }
+        }
+    },
     //给地主发三张排，并显示在原有牌的后面
     pushThreeCard(){
         //每张牌的其实位置 
-        var last_card_x =  this.cards_nods[ this.cards_nods.length-1].x
+        var last_card_x =  this.cards_nods[this.cards_nods.length-1].x
         for(var i=0;i<this.bottom_card_data.length;i++){
             var card = cc.instantiate(this.card_prefab)
             card.scale=0.8
             card.parent = this.node.parent
           
             card.x = last_card_x + ((i+1)*this.card_width * 0.4)
-            card.y = -250
+            card.y = -230  //先把底盘放在-230，在设置个定时器下移到-250的位置
            
-            console.log("pushThreeCard x:"+card.x)
+            //console.log("pushThreeCard x:"+card.x)
             card.getComponent("card").showCards(this.bottom_card_data[i],myglobal.playerData.accountID)
             card.active = true
             this.cards_nods.push(card)
         }
 
         this.sortCard()
-       
+        //设置一个定时器，在2s后，修改y坐标为-250
+        this.scheduleOnce(this.schedulePushThreeCard.bind(this),2)
+
     },
     // update (dt) {},
     onButtonClick(event,customData){
@@ -264,18 +297,30 @@ cc.Class({
                  }
                  break    
              case "nopushcard":  //不出牌
-                 myglobal.socket.request_chu_card([],null)
+                 myglobal.socket.request_buchu_card([],null)
                  this.playingUI_node.active = false
                  break
              case "pushcard":   //出牌
                  //先获取本次出牌数据
-                 var chu_card_list = []
-                 for(var i=0;i<3;i++){
-                    chu_card_list[i]=this.cards_nods[i].getComponent("card").card_id
-                 }
-                 console.log("chu_card_list"+chu_card_list)
-                 myglobal.socket.request_chu_card(chu_card_list,null)
-                 this.playingUI_node.active = false
+                 myglobal.socket.request_chu_card(this.choose_card_data,function(err,data){
+                   
+                    if(err){
+                        console.log("request_chu_card:"+err)
+                        console.log("request_chu_card"+JSON.stringify(data))
+                        if(this.tipsLabel.string==""){
+                            this.tipsLabel.string = data.msg
+                            setTimeout(function(){
+                                this.tipsLabel.string=""
+                            }.bind(this), 2000);
+                        }
+                        
+                     }else{
+                         console.log("request_chu_card data:"+JSON.stringify(data))
+                         this.playingUI_node.active = false
+                     }
+                    
+                 }.bind(this))
+                 //this.playingUI_node.active = false
                  break
              case "tipcard":
                  break            
