@@ -133,9 +133,11 @@ cc.Class({
      
     },
 
+    //处理发牌的效果
     _runactive_pushcard(){
-        console.log("_runactive_pushcard:"+this.cur_index_card)
+        //console.log("_runactive_pushcard:"+this.cur_index_card)
         if(this.cur_index_card < 0){
+            console.log("pushcard end")
             //发牌动画完成，显示抢地主按钮
             //this.robUI.active = true
             this.fapai_end = true
@@ -144,10 +146,10 @@ cc.Class({
             }
 
             if(isopen_sound){
-                console.log("start fapai_audioID"+this.fapai_audioID) 
+                //console.log("start fapai_audioID"+this.fapai_audioID) 
                 cc.audioEngine.stop(this.fapai_audioID)
             }
-            console.log("pushcard end")
+           
 
               //通知gamescene节点，倒计时
             var sendevent = this.rob_player_accountid
@@ -202,6 +204,31 @@ cc.Class({
        
     },
 
+    // createCard(){
+    //     this.cards_nods = []
+    //     for(var i=0;i<17;i++){
+        
+    //         var card = cc.instantiate(this.card_prefab)
+    //         card.scale=0.8
+    //         card.parent = this.node.parent
+    //         //card.x = card.width * 0.4 * (17 - 1) * (-0.5) + card.width * 0.4 * 0;
+    //         //这里实现为，每发一张牌A，放在已经发的牌最后一张上面
+    //         //然后A向右移动X
+    //         if(this.cards_nods.length==0){
+    //             //发的第一张牌
+    //             card.x = card.width * 0.4 * 1 * (-0.5) + card.width * 0.4 * 0;
+    //         }
+    //         //整体发过的牌想左移动
+    //         card.y = -250
+    //         card.active = false
+    
+    //         card.getComponent("card").showCards(data[i],myglobal.playerData.accountID)
+    //         //存储牌的信息,用于后面发牌效果
+    //         this.cards_nods.push(card)
+    //         this.card_width = card.width
+    //       }
+
+    // },
     pushCard(data){
     if (data) {
             data.sort(function (a, b) {
@@ -227,6 +254,8 @@ cc.Class({
         card.scale=0.8
         card.parent = this.node.parent
         card.x = card.width * 0.4 * (17 - 1) * (-0.5) + card.width * 0.4 * 0;
+        //card.x = card.width * 0.4 * (-0.5) + card.width * 0.4 * 0;
+        //这里实现为，每发一张牌，放在已经发的牌最后，然后整体移动
         card.y = -250
         card.active = false
 
@@ -315,7 +344,7 @@ cc.Class({
                 if(card_id==choose_card[i].cardid){
                     console.log("destroy card id:"+card_id)
                     //this.cards_nods[j].destroy()
-                    this.cards_nods[j].removeFromParent(true);   // 1
+                    this.cards_nods[j].removeFromParent(true);
                     destroy_card.push(this.cards_nods[j])
                     this.cards_nods.splice(j,1)
                 }
@@ -386,14 +415,23 @@ cc.Class({
         //var x = (i*this.card_width * 0.4);
         var x = (i - zeroPoint) * 30;
         var y = cardNode.y+360;
-        console.log("cardNode:x"+x+" y:"+y)
+        //console.log("cardNode:x"+x+" y:"+y)
         cardNode.setScale(0.7, 0.7);                   
         cardNode.setPosition(x, y);                     
 
        }
     },
+
+    //重新排序手上的牌,并移动
     updateCards(){
-        this.sortCard()
+        //this.sortCard()
+        var zeroPoint = this.cards_nods.length / 2;
+        for(var i=0;i<this.cards_nods.length;i++){
+            var cardNode = this.cards_nods[i]
+            var x = (i - zeroPoint) * 30;
+            cardNode.setPosition(x, -250);  
+        }
+
     },
     // update (dt) {},
     onButtonClick(event,customData){
