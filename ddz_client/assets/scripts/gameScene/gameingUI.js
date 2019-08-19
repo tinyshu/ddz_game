@@ -337,28 +337,54 @@ cc.Class({
         }
         outCard_node.removeAllChildren(true);
     },
+    //对出的牌做排序
+    pushCardSort(cards){
+        if(cards.length==1){
+            return
+        }
+        cards.sort(function(x,y){
+            var a = x.getComponent("card").card_data;
+            var b = y.getComponent("card").card_data;
+
+            if (a.hasOwnProperty('value') && b.hasOwnProperty('value')) {
+                return b.value - a.value;
+            }
+            if (a.hasOwnProperty('king') && !b.hasOwnProperty('king')) {
+                return -1;
+            }
+            if (!a.hasOwnProperty('king') && b.hasOwnProperty('king')) {
+                return 1;
+            }
+            if (a.hasOwnProperty('king') && b.hasOwnProperty('king')) {
+                return b.king - a.king;
+            }
+        })
+    },
     //将 “选中的牌” 添加到出牌区域
     appendCardsToOutZone(accountid,destroy_card){
         if(destroy_card.length==0){
             return
         }
-       console.log("appendCardsToOutZone")
+       this.pushCardSort(destroy_card)
+       //console.log("appendCardsToOutZone")
        var gameScene_script = this.node.parent.getComponent("gameScene")
        var outCard_node = gameScene_script.getUserOutCardPosByAccount(accountid)
-       console.log("OutZone:"+outCard_node.name)
+       //console.log("OutZone:"+outCard_node.name)
        //先清空出牌区域子节点
        outCard_node.removeAllChildren(true);
        //添加新的子节点
        for(var i=0;i<destroy_card.length;i++){
            var card = destroy_card[i]; 
-           outCard_node.addChild(card)
+           outCard_node.addChild(card,100+i)
        }
 
        //对出牌进行排序
        //设置出牌节点的坐标
+       var zeroPoint = destroy_card.length / 2;
        for(var i=0;i<destroy_card.length;i++){
         var cardNode = outCard_node.getChildren()[i]
-        var x = (i*this.card_width * 0.4);
+        //var x = (i*this.card_width * 0.4);
+        var x = (i - zeroPoint) * 30;
         var y = cardNode.y+360;
         console.log("cardNode:x"+x+" y:"+y)
         cardNode.setScale(0.7, 0.7);                   
