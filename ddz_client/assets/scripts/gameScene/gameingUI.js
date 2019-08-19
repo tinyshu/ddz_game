@@ -27,6 +27,8 @@ cc.Class({
         this.bottom_card_data=[]
         this.choose_card_data=[]
         this.outcar_zone = []
+
+        this.push_card_tmp = []
         //监听服务器:下发牌消息
         myglobal.socket.onPushCards(function(data){
             console.log("onPushCards"+JSON.stringify(data))
@@ -35,7 +37,7 @@ cc.Class({
             this.pushCard(data)
             if(isopen_sound){
                 //循环播放发牌音效
-                this.fapai_audioID = cc.audioEngine.play(cc.url.raw("resources/sound/fapai.mp3"),true)
+               // this.fapai_audioID = cc.audioEngine.play(cc.url.raw("resources/sound/fapai1.mp3"),true)
                 console.log("start fapai_audioID"+this.fapai_audioID) 
             }
              //左边移动定时器
@@ -157,12 +159,28 @@ cc.Class({
 
             return
         }
+
+        //原有逻辑  
+        // var move_node = this.cards_nods[this.cur_index_card]
+        // move_node.active = true
+        // var newx = move_node.x + (this.card_width * 0.4*this.cur_index_card) - (this.card_width * 0.4)
+        // var action = cc.moveTo(0.1, cc.v2(newx, -250));
+        // move_node.runAction(action)
+        // this.cur_index_card--
+        // this.scheduleOnce(this._runactive_pushcard.bind(this),0.3)
+
         
-        var move_node = this.cards_nods[this.cur_index_card]
+        var move_node = this.cards_nods[this.cards_nods.length-this.cur_index_card-1]
         move_node.active = true
-        var newx = move_node.x + (this.card_width * 0.4*this.cur_index_card) - (this.card_width * 0.4)
-        var action = cc.moveTo(0.1, cc.v2(newx, -250));
-        move_node.runAction(action)
+        this.push_card_tmp.push(move_node)
+        this.fapai_audioID = cc.audioEngine.play(cc.url.raw("resources/sound/fapai1.mp3"))
+        for(var i=0;i<this.push_card_tmp.length-1;i++){
+                var move_node = this.push_card_tmp[i]
+                var newx = move_node.x - (this.card_width * 0.4)
+                var action = cc.moveTo(0.1, cc.v2(newx, -250));
+                move_node.runAction(action)
+        }
+        
         this.cur_index_card--
         this.scheduleOnce(this._runactive_pushcard.bind(this),0.3)
     },
@@ -174,7 +192,7 @@ cc.Class({
             var b = y.getComponent("card").card_data;
 
             if (a.hasOwnProperty('value') && b.hasOwnProperty('value')) {
-                return b.value - a.value;
+                return  b.value-a.value;
             }
             if (a.hasOwnProperty('king') && !b.hasOwnProperty('king')) {
                 return -1;
@@ -183,7 +201,7 @@ cc.Class({
                 return 1;
             }
             if (a.hasOwnProperty('king') && b.hasOwnProperty('king')) {
-                return b.king - a.king;
+                return  b.king-a.king;
             }
         })
         //var x = this.cards_nods[0].x;
@@ -196,7 +214,7 @@ cc.Class({
             console.log("sort x:"+ x)
             for (let i = 0; i < this.cards_nods.length; i++) {
                 var card = this.cards_nods[i];
-                card.zIndex = i;
+                card.zIndex = i; //设置牌的叠加次序,zindex越大显示在上面
                 card.x = x + card.width * 0.4 * i;
             }
         }.bind(this), timeout);
@@ -204,31 +222,7 @@ cc.Class({
        
     },
 
-    // createCard(){
-    //     this.cards_nods = []
-    //     for(var i=0;i<17;i++){
-        
-    //         var card = cc.instantiate(this.card_prefab)
-    //         card.scale=0.8
-    //         card.parent = this.node.parent
-    //         //card.x = card.width * 0.4 * (17 - 1) * (-0.5) + card.width * 0.4 * 0;
-    //         //这里实现为，每发一张牌A，放在已经发的牌最后一张上面
-    //         //然后A向右移动X
-    //         if(this.cards_nods.length==0){
-    //             //发的第一张牌
-    //             card.x = card.width * 0.4 * 1 * (-0.5) + card.width * 0.4 * 0;
-    //         }
-    //         //整体发过的牌想左移动
-    //         card.y = -250
-    //         card.active = false
-    
-    //         card.getComponent("card").showCards(data[i],myglobal.playerData.accountID)
-    //         //存储牌的信息,用于后面发牌效果
-    //         this.cards_nods.push(card)
-    //         this.card_width = card.width
-    //       }
-
-    // },
+  
     pushCard(data){
     if (data) {
             data.sort(function (a, b) {
@@ -253,8 +247,8 @@ cc.Class({
         var card = cc.instantiate(this.card_prefab)
         card.scale=0.8
         card.parent = this.node.parent
-        card.x = card.width * 0.4 * (17 - 1) * (-0.5) + card.width * 0.4 * 0;
-        //card.x = card.width * 0.4 * (-0.5) + card.width * 0.4 * 0;
+        //card.x = card.width * 0.4 * (17 - 1) * (-0.5) + card.width * 0.4 * 0;
+        card.x = card.width * 0.4 * (-0.5) * (-16) + card.width * 0.4 * 0;
         //这里实现为，每发一张牌，放在已经发的牌最后，然后整体移动
         card.y = -250
         card.active = false
