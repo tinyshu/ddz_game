@@ -72,6 +72,30 @@ cc.Class({
             }
         }.bind(this))
 
+        //监听服务器：其他玩家出牌消息
+        myglobal.socket.onOtherPlayerChuCard(function(data){
+            //{"accountid":"2357540","cards":[{"cardid":4,"card_data":{"index":4,"value":1,"shape":1}}]}
+            console.log("onOtherPlayerChuCard"+JSON.stringify(data))
+
+            var accountid = data.accountid
+            var gameScene_script = this.node.parent.getComponent("gameScene")
+            //获取出牌区域节点
+            var outCard_node = gameScene_script.getUserOutCardPosByAccount(accountid)
+            if(outCard_node==null){
+                return
+            }
+
+            var node_cards = []
+            for(var i=0;i<data.cards.length;i++){
+                var card = cc.instantiate(this.card_prefab)
+                card.getComponent("card").showCards(data.cards[i].card_data,myglobal.playerData.accountID)
+                node_cards.push(card)
+            }
+            this.appendOtherCardsToOutZone(outCard_node,node_cards,0)
+
+            
+        }.bind(this))
+
         //内部事件:显示底牌事件,data是三张底牌数据
         this.node.on("show_bottom_card_event",function(data){
             console.log("----show_bottom_card_event",+data)
@@ -96,7 +120,7 @@ cc.Class({
                 },this,call_data)
 
                 card.runAction(cc.sequence(cc.rotateBy(0,0,180),cc.rotateBy(0.2,0,-90), run,
-                cc.rotateBy(0.2,0,-90),cc.scaleBy(1, 1.5)));
+                cc.rotateBy(0.2,0,-90),cc.scaleBy(1, 1.2)));
                
                 if(isopen_sound){
                     cc.audioEngine.play(cc.url.raw("resources/sound/start.mp3")) 
@@ -265,6 +289,8 @@ cc.Class({
         var di_card = cc.instantiate(this.card_prefab)
         di_card.scale=0.4
         di_card.position = this.bottom_card_pos_node.position 
+        //三张牌，中间坐标就是bottom_card_pos_node节点坐标，
+        //0,和2两张牌左右移动windth*0.4
         if(i==0){
             
             di_card.x = di_card.x - di_card.width*0.4
@@ -282,7 +308,7 @@ cc.Class({
 
     },
 
-
+    //给玩家发送三张底牌后，过1s,把牌设置到y=-250位置效果
     schedulePushThreeCard(){
         for(var i=0;i<this.cards_nods.length;i++){
             var card = this.cards_nods[i]
@@ -350,6 +376,7 @@ cc.Class({
 
     },
 
+    //清除显示出牌节点全部子节点(就是把出牌的清空)
     clearOutZone(accountid){
         var gameScene_script = this.node.parent.getComponent("gameScene")
         var outCard_node = gameScene_script.getUserOutCardPosByAccount(accountid)
@@ -383,37 +410,66 @@ cc.Class({
             }
         })
     },
-    //将 “选中的牌” 添加到出牌区域
-    appendCardsToOutZone(accountid,destroy_card){
-        if(destroy_card.length==0){
-            return
-        }
-       this.pushCardSort(destroy_card)
-       //console.log("appendCardsToOutZone")
-       var gameScene_script = this.node.parent.getComponent("gameScene")
-       var outCard_node = gameScene_script.getUserOutCardPosByAccount(accountid)
-       //console.log("OutZone:"+outCard_node.name)
-       //先清空出牌区域子节点
+
+    appendOtherCardsToOutZone(outCard_node,cards,yoffset){
        outCard_node.removeAllChildren(true);
+
+       //console.log("appendOtherCardsToOutZone length"+cards.length)
        //添加新的子节点
-       for(var i=0;i<destroy_card.length;i++){
-           var card = destroy_card[i]; 
-           outCard_node.addChild(card,100+i)
+       for(var i=0;i<cards.length;i++){
+           var card = cards[i]; 
+           outCard_node.addChild(card,100+i) //第二个参数是zorder,保证牌不能被遮住
        }
 
        //对出牌进行排序
        //设置出牌节点的坐标
-       var zeroPoint = destroy_card.length / 2;
-       for(var i=0;i<destroy_card.length;i++){
+       var zPoint = cards.length / 2;
+       //console.log("appendOtherCardsToOutZone zeroPoint:"+zPoint)
+       for(var i=0;i<cards.length;i++){
         var cardNode = outCard_node.getChildren()[i]
-        //var x = (i*this.card_width * 0.4);
-        var x = (i - zeroPoint) * 30;
-        var y = cardNode.y+360;
-        //console.log("cardNode:x"+x+" y:"+y)
-        cardNode.setScale(0.7, 0.7);                   
-        cardNode.setPosition(x, y);                     
+        var x = (i - zPoint) * 30;
+        var y = cardNode.y+yoffset; //因为每个节点需要的Y不一样，做参数传入
+        //console.log("-----cardNode: x:"+x+" y:"+y)
+        cardNode.setScale(0.5, 0.5);                   
+        cardNode.setPosition(x,y);                     
 
        }
+    },
+    //将 “选中的牌” 添加到出牌区域
+    //destroy_card是玩家本次出的牌
+    appendCardsToOutZone(accountid,destroy_card){
+        if(destroy_card.length==0){
+            return
+        }
+        //先给本次出的牌做一个排序
+       this.pushCardSort(destroy_card)
+       //console.log("appendCardsToOutZone")
+       var gameScene_script = this.node.parent.getComponent("gameScene")
+       //获取出牌区域节点
+       var outCard_node = gameScene_script.getUserOutCardPosByAccount(accountid)
+       this.appendOtherCardsToOutZone(outCard_node,destroy_card,360)
+       console.log("OutZone:"+outCard_node.name)
+    //    //先清空出牌区域子节点
+    //    outCard_node.removeAllChildren(true);
+    //    //添加新的子节点
+    //    for(var i=0;i<destroy_card.length;i++){
+    //        var card = destroy_card[i]; 
+    //        outCard_node.addChild(card,100+i) //第二个参数是zorder,保证牌不能被遮住
+    //    }
+
+    //    //对出牌进行排序
+    //    //设置出牌节点的坐标
+    //    var zeroPoint = destroy_card.length / 2;
+    //    for(var i=0;i<destroy_card.length;i++){
+    //     var cardNode = outCard_node.getChildren()[i]
+    //     //var x = (i*this.card_width * 0.4);
+    //     var x = (i - zeroPoint) * 30;
+    //     var y = cardNode.y+360;
+    //     //console.log("cardNode:x"+x+" y:"+y)
+    //     cardNode.setScale(0.7, 0.7);                   
+    //     cardNode.setPosition(x, y);                     
+
+      // }
     },
 
     //重新排序手上的牌,并移动
@@ -422,6 +478,7 @@ cc.Class({
         var zeroPoint = this.cards_nods.length / 2;
         for(var i=0;i<this.cards_nods.length;i++){
             var cardNode = this.cards_nods[i]
+            //var x = (i*this.card_width * 0.4);
             var x = (i - zeroPoint) * 30;
             cardNode.setPosition(x, -250);  
         }

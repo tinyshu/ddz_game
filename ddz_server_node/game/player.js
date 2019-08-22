@@ -189,5 +189,10 @@ module.exports = function(info,socket,callindex,gamectr){
     that.sendRoomState = function(data){
         _notify("room_state_notify",0,data,0)
     }
+
+    //通知：其他玩家出牌广播
+    that.SendOtherChuCard = function(data){
+        _notify("other_chucard_notify",0,data,0)
+    }
     return that
 }

@@ -315,10 +315,32 @@ module.exports = function(roominfo,player){
     const compareWithCard = function(card_list){
         return true
     } 
+
+    //广播玩家出牌的消息
+    //player出牌的玩家
+    const sendPlayerPushCard = function(player,cards){
+        if(player==null || cards.length==0){
+            return
+        }
+
+        for(var i=0;i<that._player_list.length;i++){
+            //不转发给自己
+            if(that._player_list[i]==player){
+                continue
+            }
+            data = {
+                accountid:player._accountID,
+                cards:cards,
+            }
+            that._player_list[i].SendOtherChuCard(data)
+      }
+    }
+    //玩家出牌
     that.playerChuCard = function(player,data,cb){
-        
+        console.log("playerChuCard"+JSON.stringify(data))
+        //that.cur_push_card_list = data
         //先判断牌型是否满足规则
-        if(false==that.carder.IsCanPushs(that.cur_push_card_list)){
+        if(false==that.carder.IsCanPushs(data)){
             resp = {
                 data:{
                       account:player._accountID,
@@ -328,8 +350,8 @@ module.exports = function(roominfo,player){
             cb(-1,resp)
             return
         }
-        //当前没有完成出过牌
-        if(that.cur_push_card_list.length==0){
+        //当前没有出牌
+        if(data==0){
             resp = {
                 data:{
                       account:player._accountID,
@@ -341,7 +363,7 @@ module.exports = function(roominfo,player){
             that.playerBuChuCard(null,null)
         }else{
             //和上次玩家出牌进行比较
-            if(false==compareWithCard(that.cur_push_card_list)){
+            if(false==compareWithCard(data)){
                 resp = {
                     data:{
                           account:player._accountID,
@@ -350,13 +372,19 @@ module.exports = function(roominfo,player){
                 }
                 cb(-2,resp)
             }else{
+                //出牌成功
                 resp = {
                     data:{
                           account:player._accountID,
                           msg:"choose card sucess",
                         }
                 }
+                //回调函数会给出牌玩家发送出牌成功消息 
                 cb(0,resp)
+                //通知下一个玩家出牌
+                that.playerBuChuCard(null,null)
+                 //把该玩家出的牌广播给其他玩家
+                 sendPlayerPushCard(player,data)
             }
         }
     }

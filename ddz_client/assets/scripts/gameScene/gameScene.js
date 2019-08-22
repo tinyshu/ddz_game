@@ -237,19 +237,26 @@ cc.Class({
     start () {
     },
 
+    /*
+     //通过accountid获取用户出牌放在gamescend的位置 
+     做法：先放3个节点在gameacene的场景中cardsoutzone(012)
+           
+    */
     getUserOutCardPosByAccount(accountid){
         console.log("getUserOutCardPosByAccount accountid:"+accountid)
         for(var i=0;i<this.playerNodeList.length;i++){
             var node = this.playerNodeList[i]
             if(node){
+                //获取节点绑定的组件
                 var node_script = node.getComponent("player_node")
-               
+                //如果accountid和player_node节点绑定的accountid相同
+                //接获取player_node的子节点
                 if(node_script.accountid===accountid){
                   var seat_node = this.players_seat_pos.children[node_script.seat_index]
                   var index_name = "cardsoutzone"+node_script.seat_index
-                  console.log("getUserOutCardPosByAccount index_name:"+index_name)
+                  //console.log("getUserOutCardPosByAccount index_name:"+index_name)
                   var out_card_node = seat_node.getChildByName(index_name)
-                  console.log("OutZone:"+ out_card_node.name)
+                  //console.log("OutZone:"+ out_card_node.name)
                   return out_card_node
                 }
             }

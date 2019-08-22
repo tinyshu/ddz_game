@@ -166,6 +166,12 @@ const socketCtr = function(){
             event.on("room_state_notify",callback)
         }
     }
+
+    that.onOtherPlayerChuCard = function(callback){
+        if(callback){
+            event.on("other_chucard_notify",callback)
+        }
+    }
     return that
 }
 

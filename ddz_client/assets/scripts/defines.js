@@ -14,8 +14,9 @@ const RoomState = {
     ROOM_ROBSTATE:4,    //抢地主
     ROOM_SHOWBOTTOMCARD:5, //显示底牌
     ROOM_PLAYING:6,     //出牌阶段  
-}
-exports.createRoomConfig = {
+};
+createRoomConfig = {
+//exports.createRoomConfig = {
     'rate_1': {
         needCostGold: 10,
         bottom: 1,
