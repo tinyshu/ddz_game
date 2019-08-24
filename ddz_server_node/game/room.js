@@ -339,12 +339,13 @@ module.exports = function(roominfo,player){
     that.playerChuCard = function(player,data,cb){
         console.log("playerChuCard"+JSON.stringify(data))
         //that.cur_push_card_list = data
+        //先判断自己是否有这么几张牌
         //先判断牌型是否满足规则
         if(false==that.carder.IsCanPushs(data)){
             resp = {
                 data:{
                       account:player._accountID,
-                      msg:"choose card is gulre error",
+                      msg:"不可用牌型",
                     }
             }
             cb(-1,resp)
