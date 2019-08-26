@@ -439,70 +439,147 @@ module.exports = function(){
         return true
     }
 
+    //牌型之间大小数值的定义
+    const CardsValue = {
+        'one': {
+            name: 'One',
+            value: 1
+        },
+        'double': {
+            name: 'Double',
+            value: 1
+        },
+        'three': {
+            name: 'Three',
+            value: 1
+        },
+        'boom': { //炸弹
+            name: 'Boom',
+            value: 2
+        },
+        'threeWithOne': {
+            name: 'ThreeWithOne',
+            value: 1
+        },
+        'threeWithTwo': {
+            name: 'ThreeWithTwo',
+            value: 1
+        },
+        'plane': {
+            name: 'Plane',
+            value: 1
+        },
+        'planeWithOne': {
+            name: 'PlaneWithOne',
+            value: 1
+        },
+        'planeWithTwo': {
+            name: 'PlaneWithTwo',
+            value: 1
+        },
+        'scroll': { //顺子
+            name: 'Scroll',
+            value: 1
+        },
+        'doubleScroll': {  //连队
+            name: 'DoubleScroll',
+            value: 1
+        },
+        'kingboom':{ //王炸
+            name: 'kingboom',
+            value: 3
+        },
+
+
+    };
+
+
+    that.compareWithCard = function(last_cards,current_cards){
+        //last_cards[{"cardid":3,"card_data":{"index":3,"value":13,"shape":4}},
+        //{"cardid":0,"card_data":{"index":0,"value":13,"shape":1}}]
+        console.log("last_cards"+JSON.stringify(last_cards))
+        console.log("current_cards"+JSON.stringify(current_cards))
+        card_last = getCardValue(last_cards)
+        card_current = getCardValue(current_cards)
+
+        if(card_last.value < card_current.value){
+            return true
+        }else if(card_last.value == card_current.value){
+            return true
+        }else{
+            return false
+        }
+
+        
+        return true
+    }
+
+    
     that.IsCanPushs = function(cardList){
         if (isOneCard(cardList)) {
             console.log("isOneCard sucess")
-            return true;
+            return CardsValue.one;
         }
 
         if(IsDoubleCard(cardList)){
             console.log("IsDoubleCard sucess")
-            return true
+            return CardsValue.double
         }
 
         if(Isthree(cardList)){
             console.log("Isthree sucess")
-            return true
+            return CardsValue.three
         }
 
         if(IsThreeAndOne(cardList)){
             console.log("IsThreeAndOne sucess")
-            return true
+            return CardsValue.threeWithOne
         }
 
         if(IsThreeAndTwo(cardList)){
             console.log("IsThreeAndTwo sucess")
-            return true
+            return CardsValue.threeWithTwo
         }
 
         if(IsBoom(cardList)){
             console.log("IsBoom sucess")
-            return true
+            return CardsValue.boom
         }
 
         if(IsKingBoom(cardList)){
             console.log("IsKingBoom sucess")
-            return true
+            return CardsValue.kingboom
         }
 
         if(IsPlan(cardList)){
             console.log("IsPlan sucess")
-            return true
+            return CardsValue.plane
         }
 
         if(IsPlanWithSing(cardList)){
             console.log("IsPlanWithSing sucess")
-            return true
+            return CardsValue.planeWithOne
         }
 
         if(IsPlanWithDouble(cardList)){
             console.log("IsPlanWithDouble sucess")
-            return true
+            return CardsValue.planeWithTwo
         }
         
         if(IsShunzi(cardList)){
             console.log("IsShunzi sucess")
-            return true
+            return CardsValue.scroll
         }
 
         if(IsLianDui(cardList)){
             console.log("IsLianDui sucess")
-            return true
+            return CardsValue.DoubleScroll
         }
-        return false
+        //return false
+        return undefined
     }
 
+    const getCardValue = that.IsCanPushs
    
-
     return that
 }

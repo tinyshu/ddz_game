@@ -59,6 +59,8 @@ module.exports = function(roominfo,player){
     that.three_cards = []  //三张底牌
     that.playing_cards = [] //存储出牌的用户(一轮)
     that.cur_push_card_list = [] //当前玩家出牌列表
+    that.last_push_card_list = [] //玩家上一次出的牌
+    that.last_push_card_accountid = 0  //最后一个出牌的accountid
     const changeState = function(state){
         if(that.state==state){
             return   
@@ -281,7 +283,7 @@ module.exports = function(roominfo,player){
                master_index = i
            }
         }
-
+        //重新计算出牌的顺序
         var index = master_index
         for(var i=that._player_list.length-1;i>=0;i--){
            var real_index = index % that._player_list.length
@@ -290,6 +292,12 @@ module.exports = function(roominfo,player){
            index++
         }
 
+        //如果上一个出牌的人是自己，在一轮完毕后要从新设置为空
+        //如果上一个出牌的人不是自己，就不用处理
+        if( that.last_push_card_accountid == that.playing_cards[0]._accountID){
+            that.last_push_card_list = undefined
+        }
+        
     }
 
       //下发:谁出牌的消息
@@ -312,9 +320,21 @@ module.exports = function(roominfo,player){
         turnchuCard()
     }
 
-    const compareWithCard = function(card_list){
-        return true
-    } 
+    // const compareWithCard = function(card_list){
+    //     if(card_list.length==0){
+    //         return true
+    //     }
+    //     if(last_push_card_list.length==0){
+    //         //==0说明这是第一次出牌
+    //         last_push_card_list = card_list
+    //         return true
+
+    //     }
+
+    //     //这次出牌和上次玩家出的牌的比较
+    //     console.log("compareWithCard")
+    //     return true
+    // } 
 
     //广播玩家出牌的消息
     //player出牌的玩家
@@ -334,25 +354,15 @@ module.exports = function(roominfo,player){
             }
             that._player_list[i].SendOtherChuCard(data)
       }
+
+      player.removePushCards(cards)
+
     }
     //玩家出牌
     that.playerChuCard = function(player,data,cb){
         console.log("playerChuCard"+JSON.stringify(data))
-        //that.cur_push_card_list = data
-        //先判断自己是否有这么几张牌
-        //先判断牌型是否满足规则
-        if(false==that.carder.IsCanPushs(data)){
-            resp = {
-                data:{
-                      account:player._accountID,
-                      msg:"不可用牌型",
-                    }
-            }
-            cb(-1,resp)
-            return
-        }
-        //当前没有出牌
-        if(data==0){
+         //当前没有出牌,不用走下面判断
+         if(data==0){
             resp = {
                 data:{
                       account:player._accountID,
@@ -362,22 +372,61 @@ module.exports = function(roominfo,player){
             cb(0,resp)
             //让下一个玩家出牌,并发送消息
             that.playerBuChuCard(null,null)
-        }else{
-            //和上次玩家出牌进行比较
-            if(false==compareWithCard(data)){
+        }
+        //that.cur_push_card_list = data
+        //先判断自己是否有这么几张牌
+        //先判断牌型是否满足规则
+        var cardvalue = that.carder.IsCanPushs(data)
+        if(cardvalue==undefined){
+            resp = {
+                data:{
+                      account:player._accountID,
+                      msg:"不可用牌型",
+                    }
+            }
+            cb(-1,resp)
+            return
+        }
+       else{
+
+            if(that.last_push_card_list.length==0){
+                //出牌成功
+                that.last_push_card_list = data
+                that.last_push_card_accountid = player._accountID
                 resp = {
                     data:{
                           account:player._accountID,
-                          msg:"push card is compare card error",
+                          msg:"sucess",
+                          cardvalue:cardvalue,
+                        }
+                }
+                //回调函数会给出牌玩家发送出牌成功消息 
+                cb(0,resp)
+                //通知下一个玩家出牌
+                that.playerBuChuCard(null,null)
+                //把该玩家出的牌广播给其他玩家
+                sendPlayerPushCard(player,data)
+                return 
+            }
+            //和上次玩家出牌进行比较
+            if(false==that.carder.compareWithCard(that.last_push_card_list,data)){
+                resp = {
+                    data:{
+                          account:player._accountID,
+                          msg:"当前牌太小",
+                          cardvalue:cardvalue,
                         }
                 }
                 cb(-2,resp)
             }else{
                 //出牌成功
+                that.last_push_card_list = data
+                that.last_push_card_accountid = player._accountID
                 resp = {
                     data:{
                           account:player._accountID,
                           msg:"choose card sucess",
+                          cardvalue:cardvalue,
                         }
                 }
                 //回调函数会给出牌玩家发送出牌成功消息 

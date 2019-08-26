@@ -39,6 +39,57 @@ createRoomConfig = {
     }
 };
 
+  //牌型定义
+  const CardsValue = {
+    'one': {
+        name: 'One',
+        value: 1
+    },
+    'double': {
+        name: 'Double',
+        value: 1
+    },
+    'three': {
+        name: 'Three',
+        value: 1
+    },
+    'boom': { //炸弹
+        name: 'Boom',
+        value: 2
+    },
+    'threeWithOne': {
+        name: 'ThreeWithOne',
+        value: 1
+    },
+    'threeWithTwo': {
+        name: 'ThreeWithTwo',
+        value: 1
+    },
+    'plane': {
+        name: 'Plane',
+        value: 1
+    },
+    'planeWithOne': {
+        name: 'PlaneWithOne',
+        value: 1
+    },
+    'planeWithTwo': {
+        name: 'PlaneWithTwo',
+        value: 1
+    },
+    'scroll': { //顺子
+        name: 'Scroll',
+        value: 1
+    },
+    'doubleScroll': {  //连队
+        name: 'DoubleScroll',
+        value: 1
+    },
+    'kingboom':{ //王炸
+        name: 'kingboom',
+        value: 3
+    },
+};
 
 window.defines = defines;
 

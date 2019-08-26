@@ -33,6 +33,27 @@ module.exports = function(info,socket,callindex,gamectr){
         }
    })
 
+   //删除玩家出过的牌
+   that.removePushCards = function(remve_cards){
+        if(remve_cards.length==0){
+            return 
+        }
+
+        for(var i=0;i<remve_cards.length;i++){
+            var rcard = remve_cards[i]
+            if(rcard==null){
+                continue
+            } 
+            
+            for(var j=0;j<that._cards.length;j++){
+                if(rcard.cardid==that._cards[j].cardid){
+                    that._cards.splice(j,1)
+                }
+            }
+           
+        }
+   }
+
    //data分3个部分 cmd,{data},callindex
    that._socket.on("notify",function(req){
         var cmd = req.cmd
