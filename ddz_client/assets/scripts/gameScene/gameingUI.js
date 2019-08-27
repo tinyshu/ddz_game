@@ -448,38 +448,18 @@ cc.Class({
        //获取出牌区域节点
        var outCard_node = gameScene_script.getUserOutCardPosByAccount(accountid)
        this.appendOtherCardsToOutZone(outCard_node,destroy_card,360)
-       console.log("OutZone:"+outCard_node.name)
-    //    //先清空出牌区域子节点
-    //    outCard_node.removeAllChildren(true);
-    //    //添加新的子节点
-    //    for(var i=0;i<destroy_card.length;i++){
-    //        var card = destroy_card[i]; 
-    //        outCard_node.addChild(card,100+i) //第二个参数是zorder,保证牌不能被遮住
-    //    }
+       //sconsole.log("OutZone:"+outCard_node.name)
 
-    //    //对出牌进行排序
-    //    //设置出牌节点的坐标
-    //    var zeroPoint = destroy_card.length / 2;
-    //    for(var i=0;i<destroy_card.length;i++){
-    //     var cardNode = outCard_node.getChildren()[i]
-    //     //var x = (i*this.card_width * 0.4);
-    //     var x = (i - zeroPoint) * 30;
-    //     var y = cardNode.y+360;
-    //     //console.log("cardNode:x"+x+" y:"+y)
-    //     cardNode.setScale(0.7, 0.7);                   
-    //     cardNode.setPosition(x, y);                     
-
-      // }
     },
 
     //重新排序手上的牌,并移动
     updateCards(){
-        //this.sortCard()
+    
         var zeroPoint = this.cards_nods.length / 2;
+        //var last_card_x = this.cards_nods[this.cards_nods.length-1].x
         for(var i=0;i<this.cards_nods.length;i++){
             var cardNode = this.cards_nods[i]
-            //var x = (i*this.card_width * 0.4);
-            var x = (i - zeroPoint) * 30;
+            var x = (i - zeroPoint)*(this.card_width * 0.4);
             cardNode.setPosition(x, -250);  
         }
 

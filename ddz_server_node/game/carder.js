@@ -493,7 +493,9 @@ module.exports = function(){
 
     };
 
-    //
+    //cardA是上次出的牌
+    //cardB是当前出的牌
+    //cardB大于cardA返回true
     const compareOne = function(cardA,cardB){
         console.log("compareOne")
         var valueA = 0
@@ -518,9 +520,93 @@ module.exports = function(){
 
     const compareDouble = function(cardA,cardB){
         console.log("compareDouble")
-        return true
+        var result = compareOne(cardA,cardB)
+        return result
     }
 
+    const compareThree = function(cardA,cardB){
+        console.log("compareThree")
+        var result = compareOne(cardA,cardB)
+        return result
+    }
+
+    const compareBoom = function(cardA,cardB){
+        console.log("compareBoom")
+        var result = false
+        if(cardA.length==4 && cardB.length==4){
+            result = compareOne(cardA,cardB)
+        }else if(cardA.length==4 && cardB.length==2){
+            result = true
+        }else if(cardA.length==2 && cardB.length==4){
+            result = false
+        }
+
+        return result
+    }
+
+    //三带一大小比较
+    const comparePlanWithSing = function(cardA,cardB){
+        //将三带存储到2个列表
+        var lista = []
+        var listb = []
+        var map = {}
+        for(var i=0;i<cardA.length;i++){
+            if(map.hasOwnProperty(cardA.card_data.value)){
+                lista.push(cardA)
+            }else{
+                map[cardA.card_data.value] = 1
+            }
+        }
+
+        for(var i=0;i<cardB.length;i++){
+            if(map.hasOwnProperty(cardB.card_data.value)){
+                listb.push(cardB)
+            }else{
+                map[cardB.card_data.value] = 1
+            }
+        }
+
+        var result = compareOne(cardA,cardB)
+        return result
+    }
+
+    const comparePlanWithTow = function(cardA,cardB){
+        let mapA = {};
+        let mapB = {};
+    
+        for (var i = 0; i < cardA.length; i++) {
+            if (mapA.hasOwnProperty(cardA[i].card_data.value)) {
+                mapA[cardA[i].card_data.value].push(cardA[i]);
+            } else {
+                mapA[cardA[i].card_data.value] = [cardA[i]];
+            }
+        }
+        for (var i = 0; i < cardB.length; i++) {
+            if (mapB.hasOwnProperty(cardB[i].card_data.value)) {
+                mapB[cardB[i].card_data.value].push(cardB[i]);
+            } else {
+                mapB[cardB[i].card_data.value] = [cardB[i]];
+            }
+        }
+
+        var listA = [];
+        for (var i in mapA) {
+            if (mapA[i].length === 3) {
+                listA = mapA[i];
+            }
+        }
+
+        var listB = [];
+        for (var i in mapB) {
+            if (mapB[i].length === 3) {
+                listB = mapB[i];
+            }
+        }
+
+        var result = compareOne(listA,listB)
+        return result
+
+    }
     //cardA上次出的牌
     //cardB本次出的牌
     //current_card_value当前牌型
@@ -532,6 +618,19 @@ module.exports = function(){
                 break
             case CardsValue.double.name:
                     result = compareDouble(cardA,cardB)
+                break    
+            case CardsValue.three.name:
+                    result = compareThree(cardA,cardB)
+                break
+            case CardsValue.boom.name:
+            case CardsValue.kingboom.name:
+                    result = compareBoom(cardA,cardB)
+                break    
+            case CardsValue.planeWithOne.name:
+                    result = comparePlanWithSing(cardA,cardB)
+                break 
+            case CardsValue.planeWithTwo.name:
+                    result = comparePlanWithTow(cardA,cardB)
                 break    
             default:
                 console.log("no found card value!")
