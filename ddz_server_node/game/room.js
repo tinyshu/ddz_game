@@ -295,7 +295,7 @@ module.exports = function(roominfo,player){
         //如果上一个出牌的人是自己，在一轮完毕后要从新设置为空
         //如果上一个出牌的人不是自己，就不用处理
         if( that.last_push_card_accountid == that.playing_cards[0]._accountID){
-            that.last_push_card_list = undefined
+           that.last_push_card_list = []
         }
         
     }
@@ -319,22 +319,6 @@ module.exports = function(roominfo,player){
         }
         turnchuCard()
     }
-
-    // const compareWithCard = function(card_list){
-    //     if(card_list.length==0){
-    //         return true
-    //     }
-    //     if(last_push_card_list.length==0){
-    //         //==0说明这是第一次出牌
-    //         last_push_card_list = card_list
-    //         return true
-
-    //     }
-
-    //     //这次出牌和上次玩家出的牌的比较
-    //     console.log("compareWithCard")
-    //     return true
-    // } 
 
     //广播玩家出牌的消息
     //player出牌的玩家
@@ -436,6 +420,8 @@ module.exports = function(roominfo,player){
                  //把该玩家出的牌广播给其他玩家
                  sendPlayerPushCard(player,data)
             }
+
+          
         }
     }
     //客户端到服务器: 处理玩家抢地主消息

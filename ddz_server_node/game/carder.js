@@ -493,24 +493,80 @@ module.exports = function(){
 
     };
 
+    //
+    const compareOne = function(cardA,cardB){
+        console.log("compareOne")
+        var valueA = 0
+        if(cardA[0].card_data.value==undefined){
+            valueA = cardA[0].card_data.king
+        }else{
+            valueA = cardA[0].card_data.value
+        }
 
+        var valueB = 0
+        if(cardB[0].card_data.value==undefined){
+            valueB = cardB[0].card_data.king
+        }else{
+            valueB = cardB[0].card_data.value
+        }
+        
+        if(valueA>=valueB){
+            return false
+        }
+        return true
+    }
+
+    const compareDouble = function(cardA,cardB){
+        console.log("compareDouble")
+        return true
+    }
+
+    //cardA上次出的牌
+    //cardB本次出的牌
+    //current_card_value当前牌型
+    const compare = function(cardA,cardB,current_card_value){
+        var result = false
+        switch(current_card_value.name){
+            case CardsValue.one.name:
+                    result = compareOne(cardA,cardB)
+                break
+            case CardsValue.double.name:
+                    result = compareDouble(cardA,cardB)
+                break    
+            default:
+                console.log("no found card value!")
+                break    
+        }
+
+        return result
+    }
+  
     that.compareWithCard = function(last_cards,current_cards){
         //last_cards[{"cardid":3,"card_data":{"index":3,"value":13,"shape":4}},
         //{"cardid":0,"card_data":{"index":0,"value":13,"shape":1}}]
         console.log("last_cards"+JSON.stringify(last_cards))
         console.log("current_cards"+JSON.stringify(current_cards))
-        card_last = getCardValue(last_cards)
-        card_current = getCardValue(current_cards)
+        card_last_value = getCardValue(last_cards)
+        card_current_value = getCardValue(current_cards)
+        console.log("card_last_value"+JSON.stringify(card_last_value))
+        console.log("card_current_value"+JSON.stringify(card_current_value))
+        if(last_cards.value < current_cards.value){
+            console.log("compareWithCard 1111111")
+            return true
+        }else if(last_cards.value == current_cards.value){
+            //牌型必须相同
+            if(card_last_value.name!=card_current_value.name){
+                return false
+            }
 
-        if(card_last.value < card_current.value){
-            return true
-        }else if(card_last.value == card_current.value){
-            return true
+            var result = compare(last_cards,current_cards,card_last_value)
+            console.log("compareWithCard 2222222:"+result)
+            return result
         }else{
             return false
         }
 
-        
+      
         return true
     }
 
