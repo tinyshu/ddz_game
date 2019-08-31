@@ -464,6 +464,24 @@ cc.Class({
         }
 
     },
+    
+    playPushCardSound(card_name){
+        console.log("playPushCardSound:"+card_name)
+        
+        if(card_name==""){
+            return
+        }
+
+        switch(card_name){
+            case CardsValue.one.name:
+                break
+            case CardsValue.double.name:
+                    if(isopen_sound){
+                        cc.audioEngine.play(cc.url.raw("resources/sound/duizi.mp3")) 
+                     }
+                break  
+        }
+    },
     // update (dt) {},
     onButtonClick(event,customData){
         switch(customData){
@@ -515,8 +533,12 @@ cc.Class({
                         this.choose_card_data = []
                      }else{
                          //出牌成功
-                         console.log("request_chu_card data:"+JSON.stringify(data))
+                         console.log("resp_chu_card data:"+JSON.stringify(data))
                          this.playingUI_node.active = false
+                         //播放出牌的声音
+                         //resp_chu_card data:{"account":"2519901","msg":"sucess","cardvalue":{"name":"Double","value":1}}
+                         //{"type":"other_chucard_notify","result":0,"data":{"accountid":"2519901","cards":[{"cardid":24,"card_data":{"index":24,"value":6,"shape":1}},{"cardid":26,"card_data":{"index":26,"value":6,"shape":3}}]},"callBackIndex":0}
+                         this.playPushCardSound(data.cardvalue.name)
                          this.destoryCard(data.account,this.choose_card_data)
                          this.choose_card_data = []
                      

@@ -294,8 +294,10 @@ module.exports = function(roominfo,player){
 
         //如果上一个出牌的人是自己，在一轮完毕后要从新设置为空
         //如果上一个出牌的人不是自己，就不用处理
-        if( that.last_push_card_accountid == that.playing_cards[0]._accountID){
+        var next_push_player_account = that.playing_cards[that.playing_cards.length-1]._accountID
+        if(that.last_push_card_accountid == next_push_player_account){
            that.last_push_card_list = []
+           that.last_push_card_accountid = 0
         }
         
     }

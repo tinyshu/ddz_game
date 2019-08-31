@@ -535,15 +535,17 @@ module.exports = function(){
         var result = false
         if(cardA.length==4 && cardB.length==4){
             result = compareOne(cardA,cardB)
-        }else if(cardA.length==4 && cardB.length==2){
-            result = true
-        }else if(cardA.length==2 && cardB.length==4){
-            result = false
         }
 
         return result
     }
 
+    const compareBoomKing = function(cardA,cardB){
+        if(cardB.length!=2){
+            return false
+        }
+        return true
+    }
     //三带一大小比较
     const comparePlanWithSing = function(cardA,cardB){
         //将三带存储到2个列表
@@ -607,6 +609,176 @@ module.exports = function(){
         return result
 
     }
+
+    const comparePlan = function(cardA,cardB){
+        var mapA = {};
+        for (var i = 0; i < cardA.length; i++) {
+            if (mapA.hasOwnProperty(cardA[i].card_data.value)) {
+                mapA[cardA[i].card_data.value].push(cardA[i]);
+            } else {
+                mapA[cardA[i].card_data.value] = [cardA[i]];
+            }
+        }
+
+        var listA = []
+        var maxNum = 16
+        //找到飞机里最小的一张牌
+        for (var i in mapA) {
+            if (Number(i) < maxNum) {
+                maxNum = Number(i)
+                listA = mapA[i]
+            }
+        }
+        
+        //处理cardB
+        var mapB = {};
+        for (var i = 0; i < cardB.length; i++) {
+            if (mapB.hasOwnProperty(cardB[i].card_data.value)) {
+                mapB[cardB[i].card_data.value].push(cardB[i]);
+            } else {
+                mapB[cardB[i].card_data.value] = [cardB[i]];
+            }
+        }
+
+        maxNum = 16
+        var listB = [];
+        for (var i in mapB) {
+            if (Number(i) < maxNum) {
+                maxNum = Number(i);
+                listB = mapB[i];
+            }
+        }
+
+        var result = compareThree(listA,listB)
+        return result
+    }
+
+    //飞机带2张单排
+    const comparePlaneWithOne = function(cardA,cardB){
+        var result = false
+        var mapA = {};
+        var listA = [];
+        for (var i = 0; i < cardA.length; i++) {
+            if (mapA.hasOwnProperty(cardA[i].card_data.value)) {
+                listA.push(cardA[i]);
+            } else {
+                mapA[cardA[i].card_data.value] = [cardA[i]];
+            }
+        }
+
+        var mapB = {};
+        var listB = [];
+        for (var i = 0; i < cardB.length; i++) {
+            if (mapB.hasOwnProperty(cardB[i].card_data.value)) {
+                listB.push(cardB[i]);
+            } else {
+                mapB[cardB[i].card_data.value] = [cardB[i]];
+            }
+        }
+
+        result = comparePlan(listA,listB)
+        return result
+    }
+
+    //飞机带2对
+    const comparePlaneWithDouble = function(cardA,cardB){
+        var mapA = {};
+        for (var i = 0; i < cardA.length; i++) {
+            if (mapA.hasOwnProperty(cardA[i].card_data.value)) {
+                mapA[cardA[i].card_data.value].push(cardA[i]);
+            } else {
+                mapA[cardA[i].card_data.value] = [cardA[i]];
+            }
+        }
+        var mapB = {};
+        for (var i = 0; i < cardB.length; i++) {
+            if (mapB.hasOwnProperty(cardB[i].card_data.value)) {
+                mapB[cardB[i].card_data.value].push(cardB[i]);
+            } else {
+                mapB[cardB[i].card_data.value] = [cardB[i]];
+            }
+        }
+
+        var listA = [];
+        for (var i in mapA) {
+            if (mapA[i].length === 3) {
+                for (var j = 0; j < mapA[i].length; j++) {
+                    listA.push(mapA[i][j]);
+                }
+            }
+        }
+        console.log('list a = ' + JSON.stringify(listA));
+
+        var listB = [];
+        for (var i in mapB) {
+            if (mapB[i].length === 3) {
+                for (var j = 0; j < mapB[i].length; j++) {
+                    listB.push(mapB[i][j]);
+                }
+            }
+        }
+
+        var result = comparePlan(listA,listB)
+        return result
+    }
+
+    const compareScroll = function(cardA,cardB){
+        console.log("compareScroll")
+        if(cardA.length!=cardB.length){
+            return false
+        }
+
+        var minNumA = 100;
+        for (var i = 0; i < cardA.length; i++) {
+            if (cardA[i].card_data.value < minNumA) {
+                minNumA = cardA[i].card_data.value
+            }
+        }
+
+        var minNumB = 100;
+        for (let i = 0; i < cardB.length; i++) {
+            if (cardB[i].card_data.value < minNumB) {
+                minNumB = cardB[i].card_data.value;
+            }
+        }
+
+        console.log('min a = ' + minNumA);
+        console.log('min b = ' + minNumB);
+        if (minNumA <= minNumB) {
+            return true;
+        }
+
+        return false
+    }
+
+    const compareDoubleScroll = function (cardA,cardB) {
+        var mapA = {};
+        var listA = [];
+        for (var i = 0; i < cardA.length; i++) {
+            if (mapA.hasOwnProperty(cardA[i].card_data.value)) {
+
+            } else {
+                mapA[cardA[i].card_data.value] = true;
+                listA.push(a[i]);
+            }
+        }
+
+        var mapB = {};
+        var listB = [];
+        for (var i = 0; i < cardB.length; i++) {
+            if (mapB.hasOwnProperty(cardB[i].card_data.value)) {
+
+            } else {
+                mapB[cardB[i].card_data.value] = true;
+                listB.push(cardB[i]);
+            }
+        }
+        
+        console.log('list a = ' + JSON.stringify(listA));
+        console.log('list b = ' + JSON.stringify(listB));
+
+        return compareScroll(listA, listB);
+    }
     //cardA上次出的牌
     //cardB本次出的牌
     //current_card_value当前牌型
@@ -623,17 +795,35 @@ module.exports = function(){
                     result = compareThree(cardA,cardB)
                 break
             case CardsValue.boom.name:
-            case CardsValue.kingboom.name:
                     result = compareBoom(cardA,cardB)
+                break
+            case CardsValue.kingboom.name:
+                    result = compareBoomKing(cardA,cardB)
                 break    
             case CardsValue.planeWithOne.name:
                     result = comparePlanWithSing(cardA,cardB)
                 break 
             case CardsValue.planeWithTwo.name:
                     result = comparePlanWithTow(cardA,cardB)
-                break    
+                break
+            case CardsValue.plane.name:
+                    result = comparePlan(cardA,cardB)
+                break
+            case  CardsValue.planeWithOne.name:
+                    result = comparePlaneWithOne(cardA,cardB)
+                break   
+            case  CardsValue.planeWithTwo.name:
+                    result = comparePlaneWithDouble(cardA,cardB)
+                break
+            case  CardsValue.scroll.name:
+                    result = compareScroll(cardA,cardB)
+                break
+            case  CardsValue.doubleScroll.name:
+                    result = compareDoubleScroll(cardA,cardB)
+                break               
             default:
                 console.log("no found card value!")
+                result = false
                 break    
         }
 
@@ -647,10 +837,10 @@ module.exports = function(){
         console.log("current_cards"+JSON.stringify(current_cards))
         card_last_value = getCardValue(last_cards)
         card_current_value = getCardValue(current_cards)
-        console.log("card_last_value"+JSON.stringify(card_last_value))
-        console.log("card_current_value"+JSON.stringify(card_current_value))
+        //console.log("card_last_value"+JSON.stringify(card_last_value))
+        //console.log("card_current_value"+JSON.stringify(card_current_value))
         if(last_cards.value < current_cards.value){
-            console.log("compareWithCard 1111111")
+            console.log("compareWithCard less")
             return true
         }else if(last_cards.value == current_cards.value){
             //牌型必须相同
@@ -659,7 +849,7 @@ module.exports = function(){
             }
 
             var result = compare(last_cards,current_cards,card_last_value)
-            console.log("compareWithCard 2222222:"+result)
+            
             return result
         }else{
             return false
