@@ -2,13 +2,14 @@ const socket  = require("socket.io")
 const mydb = require("./db.js")
 const gamectr = require("./game/game_ctr.js")
 const app = socket(3000)
+const db_config = require("./db_config.js")
 
 mydb.connect({
-   "host": "cdb-c4iby7gu.bj.tencentcdb.com",
-   "port": 10129,
-   "user": "root",
-   "password": "tiny550122ABC",
-   "database": "ddz"
+   "host": db_config.dbconfig.host,
+   "port": db_config.dbconfig.port,
+   "user": db_config.dbconfig.user,
+   "password": db_config.dbconfig.password,
+   "database": db_config.dbconfig.database,
 })
 
 app.on("connection",function(socket){
