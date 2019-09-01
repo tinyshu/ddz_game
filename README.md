@@ -23,3 +23,9 @@ js斗地主游戏
 
 
 ![server](https://github.com/tinyshu/ddz_game/blob/master/image/5.png)
+
+​                        
+
+​                            ![server](https://github.com/tinyshu/ddz_game/blob/master/image/6.png)
+
+​					
