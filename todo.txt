@@ -1,3 +1,5 @@
+aaaaaaaaaaaaaaa
+bbbbbbbbbbbbbb
 1.叫地主流程
     发完牌后，第一个叫的玩家显示叫地主but和相关UI，并倒计时
     发完牌后,不是当前抢地主的用户看到抢地主一个倒计时
